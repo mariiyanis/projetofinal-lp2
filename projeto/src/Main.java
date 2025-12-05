@@ -3,10 +3,170 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.InputMismatchException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException; //?
 
 
 public class Main {
     public static void main(String[] args) throws ListaPendenteException, ListaVaziaException {
+
+        Scanner sc = new Scanner(System.in);
+
+        Path caminho = Paths.get("../../../usuarios.csv");
+        
+        //se arquivo nao existir, cria com usuario "admin"
+        if(!Files.exists(caminho)){
+            System.out.println("  sem arquivo usuários  \n");
+            System.out.println("     criando arquivo     \n");
+
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter("../../../usuarios.csv"))) {
+                bw.write("nome, tema, permissoes, senha");
+                bw.newLine();
+                bw.write("ADMIN,"+ " " + TemasTelas.values()[1] + "," + " " + "1, admin");
+                bw.newLine();
+                bw.close();
+            } catch (IOException e) {
+                System.err.println("Erro ao escrever: " + e.getMessage());
+            }
+        }
+
+    while(true){
+        //ler arquivo
+        System.out.print("\n== Selecione o Usuário ==\n");
+        System.out.print("[1] Entrar com usuário\n[2] Criar novo usuário\n[3] Encerrar\n=========================\n");
+
+        int opcMen1 = 0;
+        int opcMen2 = 0;
+        boolean entrar = false;
+
+        while(true){
+            try{
+                System.out.print("Opção: ");
+                opcMen1 = sc.nextInt();
+
+                if(opcMen1 < 1 || opcMen1 > 3){
+                    System.out.print("Opção inválida\n");
+                    continue;
+                }
+                break;
+            } catch (InputMismatchException e){
+                System.out.print("Inserção inválida\n");
+                sc.nextLine();
+            }
+        }
+        if(opcMen1 == 1){
+            while(true){
+                System.out.print("insira LOGIN: ");
+                String login = sc.next();
+                System.out.print("insira SENHA: ");
+                String senha = sc.next();               
+
+                try (BufferedReader reader = new BufferedReader(new FileReader("../../../usuarios.csv"))) {
+                    String linha;
+                    while ((linha = reader.readLine()) != null) {
+                        String[] campos = linha.split(",");
+
+                        String usuarioNome = campos[0].trim();
+                        String usuarioTema = campos[1].trim();
+                        String usuarioPermissoes = campos[2].trim();
+                        String usuarioSenha = campos[3].trim();                        
+                        
+                        if(Objects.equals(login, usuarioNome)){                            
+                            if(Objects.equals(senha, usuarioSenha)){
+                                System.out.print("|Nome: " + usuarioNome + " " + "|Tema: " + usuarioTema + "\n");
+                                System.out.print("Entrando no sistema...\n");    
+                                entrar = true;
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Erro ao ler: " + e.getMessage());
+                }
+
+                if(entrar == true){
+                    break;
+                }
+                System.out.print("Usuário ou Senha inválido\n");
+            }
+        }
+        if(opcMen1 == 2){
+            System.out.print("\n=========================\nCriando novo usuário\n=========================\n");
+            String login;
+            while(true){
+            System.out.print("insira LOGIN: ");
+            login = sc.next();
+                while(true){
+                    System.out.print("confirmar \"" + login + "\" [1]Sim, [2]Não: ");
+                
+                    try{
+                        opcMen2 = sc.nextInt();
+                        if(opcMen2 < 1 || opcMen2 > 2){
+                            System.out.print("Opção inválida\n");
+                            continue;
+                        }
+                        break;
+                    } catch (InputMismatchException e){
+                        System.out.print("Inserção inválida\n");
+                        sc.nextLine();
+                    }                      
+                }
+                if(opcMen2 == 1){
+                    break;
+                }
+            }
+            String senha;
+            while(true){                
+                System.out.print("insira SENHA: ");
+                senha = sc.next();
+                System.out.print("confirme SENHA: ");
+                String confirmarSenha = sc.next();
+                if(Objects.equals(senha, confirmarSenha)){
+                    break;
+                }                            
+            }
+            TemasTelas tela;
+            while(true){
+                try{
+                System.out.print("escolha o TEMA [1]Claro, [2]Escuro : ");
+                opcMen2 = sc.nextInt();
+                if(opcMen2 < 1 || opcMen2 > 2){
+                    System.out.print("Opção inválida\n");
+                    continue;
+                }
+                tela = TemasTelas.values()[opcMen2-1];
+                break;
+                } catch (InputMismatchException e){
+                        System.out.print("Inserção inválida\n");
+                        sc.nextLine();
+                } 
+            }
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter("../../../usuarios.csv", true))) {
+                bw.newLine();
+                bw.write(login + "," + " " + tela + "," + " " + 0 + "," + " " + senha);                
+                bw.close();
+            } catch (IOException e) {
+                System.err.println("Erro ao escrever: " + e.getMessage());
+            }
+            
+            
+            //verifica
+        }
+        
+        if(opcMen1 == 3){
+            System.out.print("\n=========================\nEncerrando...\n=========================\n");
+            return;
+        }
+        if(entrar == true){
+            break;
+        }
+    }
 
         /* ===================================================================================================
         *      -TESTE REMOVER PRODUTOS: executa teste que cria todos os produtos antes de iniciar o programa *
@@ -17,8 +177,8 @@ public class Main {
         *           <<<<VARIÁVEIS PARA CONFIGURAÇÃO DE TESTES (0 = não executa; 1 = executa)>>>>             *
         =================================================================================================== */
         /**/                                                                                              /**/
-        /**/    int rodarTesteCriarProdutos = 1;                                                          /**/
-        /**/    int rodarTesteRemoverProdutos = 1;                                                        /**/
+        /**/    int rodarTesteCriarProdutos = 0;                                                          /**/
+        /**/    int rodarTesteRemoverProdutos = 0;                                                        /**/
         /**/                                                                                              /**/
         /* ================================================================================================= */
 
@@ -39,7 +199,7 @@ public class Main {
         while (true){
             System.out.print("\n===== Bem-vindo(a)! =====\n");
             System.out.print("[1] Cadastrar pedido\n[2] Entregar pedido\n[3] Pedidos pendentes\n[4] Verificar saldo do caixa\n[5] Fechar o caixa\n=========================\n");
-            Scanner sc = new Scanner(System.in);
+            //Scanner sc = new Scanner(System.in);
 
             int opc;
 
