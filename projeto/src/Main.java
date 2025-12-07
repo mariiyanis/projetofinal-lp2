@@ -10,16 +10,16 @@ import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException; //?
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws ListaPendenteException, ListaVaziaException {
 
         Scanner sc = new Scanner(System.in);
 
-        Path caminho = Paths.get("usuarios.csv"); // Caminho simples = pasta atual
+        Path caminho = Paths.get("usuarios.csv");
         
-        //se arquivo nao existir, cria com usuario "admin"
+        // se arquivo nao existir, cria com usuario "admin"
         if(!Files.exists(caminho)){
             System.out.println("  sem arquivo usuários  \n");
             System.out.println("     criando arquivo     \n");
@@ -29,14 +29,12 @@ public class Main {
                 bw.newLine();
                 bw.write("ADMIN,"+ " " + TemasTelas.values()[1] + "," + " " + "1, admin");
                 bw.newLine();
-                bw.close();
             } catch (IOException e) {
                 System.err.println("Erro ao escrever: " + e.getMessage());
             }
         }
 
     while(true){
-        //ler arquivo
         System.out.print("\n== Selecione o Usuário ==\n");
         System.out.print("[1] Entrar com usuário\n[2] Criar novo usuário\n[3] Encerrar\n=========================\n");
 
@@ -59,17 +57,23 @@ public class Main {
                 sc.nextLine();
             }
         }
+
+        // login
         if(opcMen1 == 1){
-            while(true){
+            while(true){ 
                 System.out.print("insira LOGIN: ");
                 String login = sc.next();
                 System.out.print("insira SENHA: ");
-                String senha = sc.next();               
+                String senha = sc.next();                
+
+                boolean usuarioEncontrado = false; 
 
                 try (BufferedReader reader = new BufferedReader(new FileReader("usuarios.csv"))){
                     String linha;
                     while ((linha = reader.readLine()) != null) {
                         String[] campos = linha.split(",");
+                        
+                        if (campos.length < 4) continue;
 
                         String usuarioNome = campos[0].trim();
                         String usuarioTema = campos[1].trim();
@@ -78,117 +82,79 @@ public class Main {
                         
                         if(Objects.equals(login, usuarioNome)){                            
                             if(Objects.equals(senha, usuarioSenha)){
-    System.out.print("|Nome:  "  +  usuarioNome  +  "  "  +  "|Tema:  "  +  usuarioTema + "\n");
-    
-    // Variável para controlar se deve entrar no sistema de vendas ou não
-    boolean irParaTotem = true; 
+                                usuarioEncontrado = true;
+                                System.out.print("|Nome:  "  +  usuarioNome  +  "  "  +  "|Tema:  "  +  usuarioTema + "\n");
+                                
+                                // === INTEGRAÇÃO LIMPA: MENU ADMIN ===
+                                boolean irParaSistema = true; 
 
-    // === INÍCIO DO MENU ADMIN (CRUD UPDATE) ===
-    // Verifica se a permissão contém "1" (Admin)
-    if (usuarioPermissoes.contains("1")) { 
-        System.out.println("\n===============================");
-        System.out.println("      MENU ADMINISTRADOR       ");
-        System.out.println("===============================");
-        System.out.println("[1] Acessar Sistema (Vendas)");
-        System.out.println("[2] Atualizar Preços (CRUD - Update)");
-        System.out.print("Opção: ");
-        
-        int opcAdmin = 0;
-        try {
-            opcAdmin = sc.nextInt();
-        } catch (Exception e) {
-            sc.nextLine(); // Limpa o buffer em caso de erro
-        }
+                                if (usuarioPermissoes.contains("1")) { 
+                                    System.out.println("\n===============================");
+                                    System.out.println("      MENU ADMINISTRADOR       ");
+                                    System.out.println("===============================");
+                                    System.out.println("[1] Acessar Sistema (Vendas)");
+                                    System.out.println("[2] Atualizar Preços (CRUD - Update)");
+                                    System.out.print("Opção: ");
+                                    
+                                    int opcAdmin = 0;
+                                    try {
+                                        opcAdmin = sc.nextInt();
+                                    } catch (Exception e) {
+                                        sc.nextLine(); 
+                                    }
 
-        if (opcAdmin == 2) {
-            System.out.println("\n--- Atualizar Preço Base dos Produtos ---");
-            System.out.println("1. Agua");
-            System.out.println("2. Sorvete");
-            // Você pode adicionar mais opções aqui conforme suas 8 entidades
-            System.out.print("Escolha o produto: ");
-            int prod = sc.nextInt();
-            
-            System.out.print("Digite o novo valor: R$ ");
-            double novoValor = sc.nextDouble();
+                                    if (opcAdmin == 2) {
+                                        System.out.println("\n--- Atualizar Preço Base ---");
+                                        System.out.println("1. Agua");
+                                        System.out.println("2. Sorvete");
+                                        System.out.print("Escolha o produto: ");
+                                        int prod = sc.nextInt();
+                                        System.out.print("Novo valor: R$ ");
+                                        double novoValor = sc.nextDouble();
 
-            // Chama os métodos estáticos criados nas classes
-            if (prod == 1) {
-                // Atualiza todas as variações de água (exemplo simplificado)
-                Agua.atualizarPrecoBase(1, novoValor); 
-                Agua.atualizarPrecoBase(2, novoValor + 1.0); // Ex: com gás é +1 real
-                Agua.atualizarPrecoBase(3, novoValor + 2.0); // Ex: 1L é +2 reais
-                System.out.println(">> SUCESSO: Preço da Água atualizado!");
-            } else if (prod == 2) {
-                Sorvete.setPrecoBase(novoValor);
-                System.out.println(">> SUCESSO: Preço do Sorvete atualizado!");
-            } else {
-                System.out.println(">> Produto não encontrado.");
-            }
+                                        if (prod == 1) {
+                                            Agua.atualizarPrecoBase(1, novoValor); 
+                                            Agua.atualizarPrecoBase(2, novoValor + 1.0);
+                                            Agua.atualizarPrecoBase(3, novoValor + 2.0);
+                                            System.out.println(">> SUCESSO: Preço da Água atualizado!");
+                                        } else if (prod == 2) {
+                                            Sorvete.setPrecoBase(novoValor);
+                                            System.out.println(">> SUCESSO: Preço do Sorvete atualizado!");
+                                        } else {
+                                            System.out.println(">> Produto não encontrado.");
+                                        }
+                                        System.out.println("Retornando à tela de login...");
+                                        irParaSistema = false; // Volta pro login
+                                    }
+                                }
+                                // === FIM MENU ADMIN ===
 
-            System.out.println("Retornando à tela de login...");
-            irParaTotem = false; // Impede a entrada no sistema de vendas
-            // O loop do arquivo vai continuar, mas como 'entrar' é false, ele pedirá login de novo
-        }
-    }
-    // === FIM DO MENU ADMIN ===
-
-    // Só entra no sistema se não for uma operação administrativa de atualização
-    if (irParaTotem) {
-        // ====================================================
-    // INTEGRAÇÃO: MENU ADMIN (CRUD UPDATE)
-    // ====================================================
-    boolean irParaSistema = true;
-
-    if(usuarioPermissoes.contains("1")) { // Se for Admin
-        System.out.println("\n=== PAINEL ADMINISTRATIVO ===");
-        System.out.println("[1] Iniciar Vendas (Totem)");
-        System.out.println("[2] Atualizar Preços (CRUD Update)");
-        System.out.print("Escolha: ");
-        
-        int opcAdm = 0;
-        try { opcAdm = sc.nextInt(); } catch(Exception e) { sc.nextLine(); }
-
-        if(opcAdm == 2) {
-            System.out.println("\n--- Tabela de Preços ---");
-            System.out.println("1. Agua\n2. Sorvete");
-            System.out.print("Produto ID: ");
-            int pId = sc.nextInt();
-            System.out.print("Novo Valor: R$ ");
-            double nVal = sc.nextDouble();
-
-            if(pId == 1) {
-                Agua.atualizarPrecoBase(1, nVal);
-                Agua.atualizarPrecoBase(2, nVal + 1.0);
-                Agua.atualizarPrecoBase(3, nVal + 3.0);
-                System.out.println(">> Preço da Água atualizado!");
-            } else if(pId == 2) {
-                Sorvete.setPrecoBase(nVal);
-                System.out.println(">> Preço do Sorvete atualizado!");
-            }
-            System.out.println("Reiniciando para aplicar...");
-            irParaSistema = false; // Não entra no totem
-        }
-    }
-    
-    if(irParaSistema) {
-        System.out.print("Entrando no sistema...\n");
-        entrar = true;
-    }
-    // ====================================================
-    }
-}
+                                if (irParaSistema) {
+                                    System.out.print("Entrando no sistema...\n");
+                                    entrar = true;
+                                }
+                                break; // sai do while de leitura do arquivo pois achou o usuário
+                            }
                         }
                     }
                 } catch (IOException e) {
                     System.out.println("Erro ao ler: " + e.getMessage());
                 }
 
-                if(entrar == true){
-                    break;
+                if(entrar || !usuarioEncontrado){ 
+                    // se entrou ou se não achou (para exibir msg de erro), sai do loop de login
+                    // se achou mas era admin update, o loop continua pedindo login
+                     if(!entrar && usuarioEncontrado) {
+                         // era admin, fez update, mas precisa logar de novo
+                         // continua no loop while(true) de login
+                         continue;
+                     }
+                     if(!usuarioEncontrado) System.out.println("Usuário ou Senha inválido");
+                     break; 
                 }
-                System.out.print("Usuário ou Senha inválido\n");
             }
         }
+
         if(opcMen1 == 2){
             System.out.print("\n=========================\nCriando novo usuário\n=========================\n");
             String login;
@@ -292,7 +258,6 @@ public class Main {
         while (true){
             System.out.print("\n===== Bem-vindo(a)! =====\n");
             System.out.print("[1] Cadastrar pedido\n[2] Entregar pedido\n[3] Pedidos pendentes\n[4] Verificar saldo do caixa\n[5] Fechar o caixa\n=========================\n");
-            //Scanner sc = new Scanner(System.in);
 
             int opc;
 
@@ -344,14 +309,14 @@ public class Main {
                                 sc.nextLine();
                             }
                         }
-                        // --- INTEGRAÇÃO: REMOVER ITEM (CRUD DELETE) ---
+                        // remover item (crud delete)
     if(opc2 == 12) {
         if(produtosPedidoAtual.isEmpty()) {
             System.out.println(">> O carrinho está vazio!");
         } else {
             System.out.println("\n=== CARRINHO ===");
             for(int i=0; i < produtosPedidoAtual.size(); i++) {
-                // Mostra [ID] Nome - Preço
+                // mostra [ID] Nome - Preço
                 Produtos p = produtosPedidoAtual.get(i);
                 System.out.println("[" + i + "] " + p.getNome() + " - R$ " + String.format("%.2f", p.getPreco()));
             }
