@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
@@ -13,20 +12,19 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException; //?
 
-
 public class Main {
     public static void main(String[] args) throws ListaPendenteException, ListaVaziaException {
 
         Scanner sc = new Scanner(System.in);
 
-        Path caminho = Paths.get("../../../usuarios.csv");
+        Path caminho = Paths.get("usuarios.csv"); // Caminho simples = pasta atual
         
         //se arquivo nao existir, cria com usuario "admin"
         if(!Files.exists(caminho)){
             System.out.println("  sem arquivo usuários  \n");
             System.out.println("     criando arquivo     \n");
 
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter("../../../usuarios.csv"))) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter("usuarios.csv"))) {
                 bw.write("nome, tema, permissoes, senha");
                 bw.newLine();
                 bw.write("ADMIN,"+ " " + TemasTelas.values()[1] + "," + " " + "1, admin");
@@ -68,7 +66,7 @@ public class Main {
                 System.out.print("insira SENHA: ");
                 String senha = sc.next();               
 
-                try (BufferedReader reader = new BufferedReader(new FileReader("../../../usuarios.csv"))) {
+                try (BufferedReader reader = new BufferedReader(new FileReader("usuarios.csv"))){
                     String linha;
                     while ((linha = reader.readLine()) != null) {
                         String[] campos = linha.split(",");
@@ -80,10 +78,105 @@ public class Main {
                         
                         if(Objects.equals(login, usuarioNome)){                            
                             if(Objects.equals(senha, usuarioSenha)){
-                                System.out.print("|Nome: " + usuarioNome + " " + "|Tema: " + usuarioTema + "\n");
-                                System.out.print("Entrando no sistema...\n");    
-                                entrar = true;
-                            }
+    System.out.print("|Nome:  "  +  usuarioNome  +  "  "  +  "|Tema:  "  +  usuarioTema + "\n");
+    
+    // Variável para controlar se deve entrar no sistema de vendas ou não
+    boolean irParaTotem = true; 
+
+    // === INÍCIO DO MENU ADMIN (CRUD UPDATE) ===
+    // Verifica se a permissão contém "1" (Admin)
+    if (usuarioPermissoes.contains("1")) { 
+        System.out.println("\n===============================");
+        System.out.println("      MENU ADMINISTRADOR       ");
+        System.out.println("===============================");
+        System.out.println("[1] Acessar Sistema (Vendas)");
+        System.out.println("[2] Atualizar Preços (CRUD - Update)");
+        System.out.print("Opção: ");
+        
+        int opcAdmin = 0;
+        try {
+            opcAdmin = sc.nextInt();
+        } catch (Exception e) {
+            sc.nextLine(); // Limpa o buffer em caso de erro
+        }
+
+        if (opcAdmin == 2) {
+            System.out.println("\n--- Atualizar Preço Base dos Produtos ---");
+            System.out.println("1. Agua");
+            System.out.println("2. Sorvete");
+            // Você pode adicionar mais opções aqui conforme suas 8 entidades
+            System.out.print("Escolha o produto: ");
+            int prod = sc.nextInt();
+            
+            System.out.print("Digite o novo valor: R$ ");
+            double novoValor = sc.nextDouble();
+
+            // Chama os métodos estáticos criados nas classes
+            if (prod == 1) {
+                // Atualiza todas as variações de água (exemplo simplificado)
+                Agua.atualizarPrecoBase(1, novoValor); 
+                Agua.atualizarPrecoBase(2, novoValor + 1.0); // Ex: com gás é +1 real
+                Agua.atualizarPrecoBase(3, novoValor + 2.0); // Ex: 1L é +2 reais
+                System.out.println(">> SUCESSO: Preço da Água atualizado!");
+            } else if (prod == 2) {
+                Sorvete.setPrecoBase(novoValor);
+                System.out.println(">> SUCESSO: Preço do Sorvete atualizado!");
+            } else {
+                System.out.println(">> Produto não encontrado.");
+            }
+
+            System.out.println("Retornando à tela de login...");
+            irParaTotem = false; // Impede a entrada no sistema de vendas
+            // O loop do arquivo vai continuar, mas como 'entrar' é false, ele pedirá login de novo
+        }
+    }
+    // === FIM DO MENU ADMIN ===
+
+    // Só entra no sistema se não for uma operação administrativa de atualização
+    if (irParaTotem) {
+        // ====================================================
+    // INTEGRAÇÃO: MENU ADMIN (CRUD UPDATE)
+    // ====================================================
+    boolean irParaSistema = true;
+
+    if(usuarioPermissoes.contains("1")) { // Se for Admin
+        System.out.println("\n=== PAINEL ADMINISTRATIVO ===");
+        System.out.println("[1] Iniciar Vendas (Totem)");
+        System.out.println("[2] Atualizar Preços (CRUD Update)");
+        System.out.print("Escolha: ");
+        
+        int opcAdm = 0;
+        try { opcAdm = sc.nextInt(); } catch(Exception e) { sc.nextLine(); }
+
+        if(opcAdm == 2) {
+            System.out.println("\n--- Tabela de Preços ---");
+            System.out.println("1. Agua\n2. Sorvete");
+            System.out.print("Produto ID: ");
+            int pId = sc.nextInt();
+            System.out.print("Novo Valor: R$ ");
+            double nVal = sc.nextDouble();
+
+            if(pId == 1) {
+                Agua.atualizarPrecoBase(1, nVal);
+                Agua.atualizarPrecoBase(2, nVal + 1.0);
+                Agua.atualizarPrecoBase(3, nVal + 3.0);
+                System.out.println(">> Preço da Água atualizado!");
+            } else if(pId == 2) {
+                Sorvete.setPrecoBase(nVal);
+                System.out.println(">> Preço do Sorvete atualizado!");
+            }
+            System.out.println("Reiniciando para aplicar...");
+            irParaSistema = false; // Não entra no totem
+        }
+    }
+    
+    if(irParaSistema) {
+        System.out.print("Entrando no sistema...\n");
+        entrar = true;
+    }
+    // ====================================================
+    }
+}
                         }
                     }
                 } catch (IOException e) {
@@ -147,7 +240,7 @@ public class Main {
                         sc.nextLine();
                 } 
             }
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter("../../../usuarios.csv", true))) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter("usuarios.csv", true))) {
                 bw.newLine();
                 bw.write(login + "," + " " + tela + "," + " " + 0 + "," + " " + senha);                
                 bw.close();
@@ -235,13 +328,13 @@ public class Main {
 
                     System.out.print("\n=========================\nAdicione produtos ao carrinho:\n");
                     while(true){
-                        System.out.print("\n=========================\n[1] Hamburguer (simples/ duplo/ triplo)\n[2] Croc (simples/ parmegiana/ americano)\n[3] X-salada\n[4] X-egg bacon burguer\n[5] Burguer americano(simples/ duplo/ triplo)\n[6] Box-combo\n[7] Sorvete (chocolate/ misto/ creme)\n[8] Porções (Batata/ Filé de frango empanado)\n[9] Bebida\n[10] Concluir\n[11] Cancelar pedido\n\n=========================\n");
+                        System.out.print("\n=========================\n[1] Hamburguer (simples/ duplo/ triplo)\n[2] Croc (simples/ parmegiana/ americano)\n[3] X-salada\n[4] X-egg bacon burguer\n[5] Burguer americano(simples/ duplo/ triplo)\n[6] Box-combo\n[7] Sorvete (chocolate/ misto/ creme)\n[8] Porções (Batata/ Filé de frango empanado)\n[9] Bebida\n[10] Concluir\n[11] Cancelar pedido\n[12] Remover Item\n=========================\n");
 
                         while (true){
                             try{
                                 System.out.print("Opção: ");
                                 opc2 = sc.nextInt();
-                                if(opc2 < 1 || opc2 > 11){
+                                if(opc2 < 1 || opc2 > 12){
                                     System.out.print("Opção inválida\n");
                                     continue;
                                 }
@@ -251,6 +344,27 @@ public class Main {
                                 sc.nextLine();
                             }
                         }
+                        // --- INTEGRAÇÃO: REMOVER ITEM (CRUD DELETE) ---
+    if(opc2 == 12) {
+        if(produtosPedidoAtual.isEmpty()) {
+            System.out.println(">> O carrinho está vazio!");
+        } else {
+            System.out.println("\n=== CARRINHO ===");
+            for(int i=0; i < produtosPedidoAtual.size(); i++) {
+                // Mostra [ID] Nome - Preço
+                Produtos p = produtosPedidoAtual.get(i);
+                System.out.println("[" + i + "] " + p.getNome() + " - R$ " + String.format("%.2f", p.getPreco()));
+            }
+            System.out.print("Digite o ID para remover (-1 volta): ");
+            int idDel = sc.nextInt();
+            if(idDel >= 0 && idDel < produtosPedidoAtual.size()) {
+                Produtos rem = produtosPedidoAtual.remove(idDel);
+                System.out.println(">> " + rem.getNome() + " removido!");
+            }
+        }
+        continue; // Volta para o menu
+    }
+    // ----------------------------------------------
                         if(opc2 == 11){
                             produtosPedidoAtual.clear();
                             System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
@@ -2347,9 +2461,3 @@ public class Main {
         return 1;
     }
 }
-
-
-
-
-
-
