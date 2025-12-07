@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-
 public class CrocSimples implements Produtos{
     private ArrayList<IngredientesCroc> ingredientesCrocs;
     private double preco;
@@ -78,6 +77,5 @@ public class CrocSimples implements Produtos{
     public double getPreco() {
         return preco;
     }
-
 
 }
