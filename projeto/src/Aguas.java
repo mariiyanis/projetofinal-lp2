@@ -1,5 +1,5 @@
 public enum Aguas {
-    MINERAL,
-    COM_GAS,
-    SABORIZADA_LIMAO
+    SEM_GAS_500ml,
+    COM_GAS_500ml,
+    SEM_GAS_1L
 }
