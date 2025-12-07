@@ -18,260 +18,263 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         Path caminho = Paths.get("usuarios.csv");
-        
+
         // se arquivo nao existir, cria com usuario "admin"
-        if(!Files.exists(caminho)){
+        if (!Files.exists(caminho)) {
             System.out.println("  sem arquivo usuários  \n");
             System.out.println("     criando arquivo     \n");
 
             try (BufferedWriter bw = new BufferedWriter(new FileWriter("usuarios.csv"))) {
                 bw.write("nome, tema, permissoes, senha");
                 bw.newLine();
-                bw.write("ADMIN,"+ " " + TemasTelas.values()[1] + "," + " " + "1, admin");
+                bw.write("ADMIN," + " " + TemasTelas.values()[1] + "," + " " + "1, admin");
                 bw.newLine();
             } catch (IOException e) {
                 System.err.println("Erro ao escrever: " + e.getMessage());
             }
         }
 
-    while(true){
-        System.out.print("\n== Selecione o Usuário ==\n");
-        System.out.print("[1] Entrar com usuário\n[2] Criar novo usuário\n[3] Encerrar\n=========================\n");
+        while (true) {
+            System.out.print("\n== Selecione o Usuário ==\n");
+            System.out.print("[1] Entrar com usuário\n[2] Criar novo usuário\n[3] Encerrar\n=========================\n");
 
-        int opcMen1 = 0;
-        int opcMen2 = 0;
-        boolean entrar = false;
+            int opcMen1 = 0;
+            int opcMen2 = 0;
+            boolean entrar = false;
 
-        while(true){
-            try{
-                System.out.print("Opção: ");
-                opcMen1 = sc.nextInt();
+            while (true) {
+                try {
+                    System.out.print("Opção: ");
+                    opcMen1 = sc.nextInt();
 
-                if(opcMen1 < 1 || opcMen1 > 3){
-                    System.out.print("Opção inválida\n");
-                    continue;
+                    if (opcMen1 < 1 || opcMen1 > 3) {
+                        System.out.print("Opção inválida\n");
+                        continue;
+                    }
+                    break;
+                } catch (InputMismatchException e) {
+                    System.out.print("Inserção inválida\n");
+                    sc.nextLine();
                 }
-                break;
-            } catch (InputMismatchException e){
-                System.out.print("Inserção inválida\n");
-                sc.nextLine();
             }
-        }
 
-        // login
-        if(opcMen1 == 1){
-            while(true){ 
-                System.out.print("insira LOGIN: ");
-                String login = sc.next();
-                System.out.print("insira SENHA: ");
-                String senha = sc.next();                
+            // login
+            if (opcMen1 == 1) {
+                while (true) {
+                    System.out.print("insira LOGIN: ");
+                    String login = sc.next();
+                    System.out.print("insira SENHA: ");
+                    String senha = sc.next();
 
-                boolean usuarioEncontrado = false; 
+                    boolean usuarioEncontrado = false;
 
-                try (BufferedReader reader = new BufferedReader(new FileReader("usuarios.csv"))){
-                    String linha;
-                    while ((linha = reader.readLine()) != null) {
-                        String[] campos = linha.split(",");
-                        
-                        if (campos.length < 4) continue;
+                    try (BufferedReader reader = new BufferedReader(new FileReader("usuarios.csv"))) {
+                        String linha;
+                        while ((linha = reader.readLine()) != null) {
+                            String[] campos = linha.split(",");
 
-                        String usuarioNome = campos[0].trim();
-                        String usuarioTema = campos[1].trim();
-                        String usuarioPermissoes = campos[2].trim();
-                        String usuarioSenha = campos[3].trim();                        
-                        
-                        if(Objects.equals(login, usuarioNome)){                            
-                            if(Objects.equals(senha, usuarioSenha)){
-                                usuarioEncontrado = true;
-                                System.out.print("|Nome:  "  +  usuarioNome  +  "  "  +  "|Tema:  "  +  usuarioTema + "\n");
-                                
-                                // === INTEGRAÇÃO LIMPA: MENU ADMIN ===
-                                boolean irParaSistema = true; 
+                            if (campos.length < 4) continue;
 
-                                if (usuarioPermissoes.contains("1")) { 
-                                    System.out.println("\n===============================");
-                                    System.out.println("      MENU ADMINISTRADOR       ");
-                                    System.out.println("===============================");
-                                    System.out.println("[1] Acessar Sistema (Vendas)");
-                                    System.out.println("[2] Atualizar Preços (CRUD - Update)");
-                                    System.out.print("Opção: ");
-                                    
-                                    int opcAdmin = 0;
-                                    try {
-                                        opcAdmin = sc.nextInt();
-                                    } catch (Exception e) {
-                                        sc.nextLine(); 
-                                    }
+                            String usuarioNome = campos[0].trim();
+                            String usuarioTema = campos[1].trim();
+                            String usuarioPermissoes = campos[2].trim();
+                            String usuarioSenha = campos[3].trim();
 
-                                    if (opcAdmin == 2) {
-                                        System.out.println("\n--- Atualizar Preço Base ---");
-                                        System.out.println("1. Agua");
-                                        System.out.println("2. Sorvete");
-                                        System.out.print("Escolha o produto: ");
-                                        int prod = sc.nextInt();
-                                        System.out.print("Novo valor: R$ ");
-                                        double novoValor = sc.nextDouble();
+                            if (Objects.equals(login, usuarioNome)) {
+                                if (Objects.equals(senha, usuarioSenha)) {
+                                    System.out.print("|Nome:  " + usuarioNome + "  " + "|Tema:  " + usuarioTema + "\n");
 
-                                        if (prod == 1) {
-                                            Agua.atualizarPrecoBase(1, novoValor); 
-                                            Agua.atualizarPrecoBase(2, novoValor + 1.0);
-                                            Agua.atualizarPrecoBase(3, novoValor + 2.0);
-                                            System.out.println(">> SUCESSO: Preço da Água atualizado!");
-                                        } else if (prod == 2) {
-                                            Sorvete.setPrecoBase(novoValor);
-                                            System.out.println(">> SUCESSO: Preço do Sorvete atualizado!");
-                                        } else {
-                                            System.out.println(">> Produto não encontrado.");
+                                    boolean irParaSistema = true;
+
+                                    // === MENU ADMIN (ATUALIZADO COM BATATA) ===
+                                    if (usuarioPermissoes.contains("1")) {
+                                        System.out.println("\n=== PAINEL ADMINISTRATIVO ===");
+                                        System.out.println("[1] Iniciar Vendas");
+                                        System.out.println("[2] Atualizar Preços");
+                                        System.out.print("Opção: ");
+
+                                        int opcAdmin = 0;
+                                        try {
+                                            opcAdmin = sc.nextInt();
+                                        } catch (Exception e) {
+                                            sc.nextLine();
                                         }
-                                        System.out.println("Retornando à tela de login...");
-                                        irParaSistema = false; // Volta pro login
-                                    }
-                                }
-                                // === FIM MENU ADMIN ===
 
-                                if (irParaSistema) {
-                                    System.out.print("Entrando no sistema...\n");
-                                    entrar = true;
-                                }
-                                break; // sai do while de leitura do arquivo pois achou o usuário
+                                        if (opcAdmin == 2) {
+                                            System.out.println("\n--- Tabela de Preços ---");
+                                            System.out.println("1. Agua");
+                                            System.out.println("2. Sorvete");
+                                            System.out.println("3. Batata Frita"); // NOVA OPÇÃO
+                                            System.out.print("Produto ID: ");
+                                            int pId = sc.nextInt();
+
+                                            System.out.print("Novo Valor: R$ ");
+                                            double nVal = sc.nextDouble();
+
+                                            if (pId == 1) {
+                                                Agua.atualizarPrecoBase(1, nVal);
+                                                Agua.atualizarPrecoBase(2, nVal + 1.0);
+                                                Agua.atualizarPrecoBase(3, nVal + 2.0);
+                                                System.out.println(">> Preço da Água atualizado!");
+                                            } else if (pId == 2) {
+                                                Sorvete.setPrecoBase(nVal);
+                                                System.out.println(">> Preço do Sorvete atualizado!");
+                                            } else if (pId == 3) {
+                                                BatataFrita.setPrecoBase(nVal); // CHAMA O MÉTODO NOVO
+                                                System.out.println(">> Preço da Batata atualizado!");
+                                            }
+
+                                            System.out.println("Reiniciando para aplicar...");
+                                            irParaSistema = false;
+                                        }
+                                    }
+                                    // ==========================================
+
+                                    if (irParaSistema) {
+                                        System.out.print("Entrando no sistema...\n");
+                                        entrar = true;
+                                    }
+                                    break; // Sai do loop de leitura do arquivo
+                                } // sai do while de leitura do arquivo pois achou o usuário
                             }
                         }
+                    } catch (IOException e) {
+                        System.out.println("Erro ao ler: " + e.getMessage());
                     }
-                } catch (IOException e) {
-                    System.out.println("Erro ao ler: " + e.getMessage());
-                }
 
-                if(entrar || !usuarioEncontrado){ 
-                    // se entrou ou se não achou (para exibir msg de erro), sai do loop de login
-                    // se achou mas era admin update, o loop continua pedindo login
-                     if(!entrar && usuarioEncontrado) {
-                         // era admin, fez update, mas precisa logar de novo
-                         // continua no loop while(true) de login
-                         continue;
-                     }
-                     if(!usuarioEncontrado) System.out.println("Usuário ou Senha inválido");
-                     break; 
+                    if (entrar || !usuarioEncontrado) {
+                        // se entrou ou se não achou (para exibir msg de erro), sai do loop de login
+                        // se achou mas era admin update, o loop continua pedindo login
+                        if (!entrar && usuarioEncontrado) {
+                            // era admin, fez update, mas precisa logar de novo
+                            // continua no loop while(true) de login
+                            continue;
+                        }
+                        if (!usuarioEncontrado) System.out.println("Usuário ou Senha inválido");
+                        break;
+                    }
                 }
             }
-        }
 
-        if(opcMen1 == 2){
-            System.out.print("\n=========================\nCriando novo usuário\n=========================\n");
-            String login;
-            while(true){
-            System.out.print("insira LOGIN: ");
-            login = sc.next();
-                while(true){
-                    System.out.print("confirmar \"" + login + "\" [1]Sim, [2]Não: ");
-                
-                    try{
+            if (opcMen1 == 2) {
+                System.out.print("\n=========================\nCriando novo usuário\n=========================\n");
+                String login;
+                while (true) {
+                    System.out.print("insira LOGIN: ");
+                    login = sc.next();
+                    while (true) {
+                        System.out.print("confirmar \"" + login + "\" [1]Sim, [2]Não: ");
+
+                        try {
+                            opcMen2 = sc.nextInt();
+                            if (opcMen2 < 1 || opcMen2 > 2) {
+                                System.out.print("Opção inválida\n");
+                                continue;
+                            }
+                            break;
+                        } catch (InputMismatchException e) {
+                            System.out.print("Inserção inválida\n");
+                            sc.nextLine();
+                        }
+                    }
+                    if (opcMen2 == 1) {
+                        break;
+                    }
+                }
+                String senha;
+                while (true) {
+                    System.out.print("insira SENHA: ");
+                    senha = sc.next();
+                    System.out.print("confirme SENHA: ");
+                    String confirmarSenha = sc.next();
+                    if (Objects.equals(senha, confirmarSenha)) {
+                        break;
+                    }
+                }
+                TemasTelas tela;
+                while (true) {
+                    try {
+                        System.out.print("escolha o TEMA [1]Claro, [2]Escuro : ");
                         opcMen2 = sc.nextInt();
-                        if(opcMen2 < 1 || opcMen2 > 2){
+                        if (opcMen2 < 1 || opcMen2 > 2) {
                             System.out.print("Opção inválida\n");
                             continue;
                         }
+                        tela = TemasTelas.values()[opcMen2 - 1];
                         break;
-                    } catch (InputMismatchException e){
+                    } catch (InputMismatchException e) {
                         System.out.print("Inserção inválida\n");
                         sc.nextLine();
-                    }                      
+                    }
                 }
-                if(opcMen2 == 1){
-                    break;
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter("usuarios.csv", true))) {
+                    bw.newLine();
+                    bw.write(login + "," + " " + tela + "," + " " + 0 + "," + " " + senha);
+                    bw.close();
+                } catch (IOException e) {
+                    System.err.println("Erro ao escrever: " + e.getMessage());
                 }
+
+
+                //verifica
             }
-            String senha;
-            while(true){                
-                System.out.print("insira SENHA: ");
-                senha = sc.next();
-                System.out.print("confirme SENHA: ");
-                String confirmarSenha = sc.next();
-                if(Objects.equals(senha, confirmarSenha)){
-                    break;
-                }                            
+
+            if (opcMen1 == 3) {
+                System.out.print("\n=========================\nEncerrando...\n=========================\n");
+                return;
             }
-            TemasTelas tela;
-            while(true){
-                try{
-                System.out.print("escolha o TEMA [1]Claro, [2]Escuro : ");
-                opcMen2 = sc.nextInt();
-                if(opcMen2 < 1 || opcMen2 > 2){
-                    System.out.print("Opção inválida\n");
-                    continue;
-                }
-                tela = TemasTelas.values()[opcMen2-1];
+            if (entrar == true) {
                 break;
-                } catch (InputMismatchException e){
-                        System.out.print("Inserção inválida\n");
-                        sc.nextLine();
-                } 
             }
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter("usuarios.csv", true))) {
-                bw.newLine();
-                bw.write(login + "," + " " + tela + "," + " " + 0 + "," + " " + senha);                
-                bw.close();
-            } catch (IOException e) {
-                System.err.println("Erro ao escrever: " + e.getMessage());
-            }
-            
-            
-            //verifica
         }
-        
-        if(opcMen1 == 3){
-            System.out.print("\n=========================\nEncerrando...\n=========================\n");
-            return;
-        }
-        if(entrar == true){
-            break;
-        }
-    }
 
         /* ===================================================================================================
-        *      -TESTE REMOVER PRODUTOS: executa teste que cria todos os produtos antes de iniciar o programa *
-        *       e exibe seus ingredientes                                                                    *
-        *      -TESTE CRIAR PRODUTOS: teste que cria todos os produtos antes de iniciar o programa           *
-        *        e remove todos seus ingredientes e exibe o resultado                                        *
-        * ================================================================================================== * 
-        *           <<<<VARIÁVEIS PARA CONFIGURAÇÃO DE TESTES (0 = não executa; 1 = executa)>>>>             *
-        =================================================================================================== */
-        /**/                                                                                              /**/
-        /**/    int rodarTesteCriarProdutos = 0;                                                          /**/
-        /**/    int rodarTesteRemoverProdutos = 0;                                                        /**/
-        /**/                                                                                              /**/
+         * -TESTE REMOVER PRODUTOS: executa teste que cria todos os produtos antes de iniciar o programa *
+         * e exibe seus ingredientes                                                                    *
+         * -TESTE CRIAR PRODUTOS: teste que cria todos os produtos antes de iniciar o programa           *
+         * e remove todos seus ingredientes e exibe o resultado                                        *
+         * ================================================================================================== *
+         * <<<<VARIÁVEIS PARA CONFIGURAÇÃO DE TESTES (0 = não executa; 1 = executa)>>>>            *
+         =================================================================================================== */
+        /**/
+        /**/ int rodarTesteCriarProdutos = 0;
+        /**/
+        /**/ int rodarTesteRemoverProdutos = 0;
+        /**/
+        /**/
         /* ================================================================================================= */
 
         //roda testes antes de executar main, se selecionado
-        if(rodarTesteCriarProdutos == 1){
-            testeCriarProdutos();        
+        if (rodarTesteCriarProdutos == 1) {
+            testeCriarProdutos();
         }
 
         //roda testes antes de executar main, se selecionado
-        if(rodarTesteRemoverProdutos == 1){
+        if (rodarTesteRemoverProdutos == 1) {
             testeRemoverProdutos();
-        }        
+        }
 
         //main
         Caixa caixa = new Caixa();
-        int id = 0;        
+        int id = 0;
         int vaifechar = 0;
-        while (true){
+        while (true) {
             System.out.print("\n===== Bem-vindo(a)! =====\n");
             System.out.print("[1] Cadastrar pedido\n[2] Entregar pedido\n[3] Pedidos pendentes\n[4] Verificar saldo do caixa\n[5] Fechar o caixa\n=========================\n");
 
             int opc;
 
-            while(true){
-                try{
+            while (true) {
+                try {
                     System.out.print("Opção: ");
                     opc = sc.nextInt();
 
-                    if(opc < 1 || opc > 5){
+                    if (opc < 1 || opc > 5) {
                         System.out.print("Opção inválida\n");
                         continue;
                     }
                     break;
-                } catch (InputMismatchException e){
+                } catch (InputMismatchException e) {
                     System.out.print("Inserção inválida\n");
                     sc.nextLine();
                 }
@@ -281,157 +284,162 @@ public class Main {
             int opc3 = 0;
             int opc4 = 0;
 
-            switch (opc){
+            switch (opc) {
                 case 1:
-                    ArrayList <Produtos> produtosPedidoAtual = new ArrayList<>();
+                    ArrayList<Produtos> produtosPedidoAtual = new ArrayList<>();
                     System.out.print("\n=========================\nNome do pedido(n para cancelar): ");
                     String nome = sc.next();
-                    if(Objects.equals(nome, "n")){
+                    if (Objects.equals(nome, "n")) {
                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                         break;
                     }
 
                     System.out.print("\n=========================\nAdicione produtos ao carrinho:\n");
-                    while(true){
-                        System.out.print("\n=========================\n[1] Hamburguer (simples/ duplo/ triplo)\n[2] Croc (simples/ parmegiana/ americano)\n[3] X-salada\n[4] X-egg bacon burguer\n[5] Burguer americano(simples/ duplo/ triplo)\n[6] Box-combo\n[7] Sorvete (chocolate/ misto/ creme)\n[8] Porções (Batata/ Filé de frango empanado)\n[9] Bebida\n[10] Concluir\n[11] Cancelar pedido\n[12] Remover Item\n=========================\n");
+                    while (true) {
+                        System.out.print("\n=========================\n[1] Hamburguer (simples/ duplo/ triplo)\n[2] Croc (simples/ parmegiana/ americano)\n[3] X-salada\n[4] X-egg bacon burguer\n[5] Burguer americano(simples/ duplo/ triplo)\n[6] Box-combo\n[7] Sorvete (chocolate/ misto/ creme)\n[8] Porções (Batata/ Filé de frango empanado)\n[9] Bebida\n[10] Concluir\n[11] Cancelar pedido\n[12] Remover item do carrinho\n\n=========================\n");
 
-                        while (true){
-                            try{
+                        while (true) {
+                            try {
                                 System.out.print("Opção: ");
                                 opc2 = sc.nextInt();
-                                if(opc2 < 1 || opc2 > 12){
+                                if (opc2 < 1 || opc2 > 12) {
                                     System.out.print("Opção inválida\n");
                                     continue;
                                 }
                                 break;
-                            } catch (InputMismatchException e){
+                            } catch (InputMismatchException e) {
                                 System.out.print("Inserção inválida\n");
                                 sc.nextLine();
                             }
                         }
-                        // remover item (crud delete)
-    if(opc2 == 12) {
-        if(produtosPedidoAtual.isEmpty()) {
-            System.out.println(">> O carrinho está vazio!");
-        } else {
-            System.out.println("\n=== CARRINHO ===");
-            for(int i=0; i < produtosPedidoAtual.size(); i++) {
-                // mostra [ID] Nome - Preço
-                Produtos p = produtosPedidoAtual.get(i);
-                System.out.println("[" + i + "] " + p.getNome() + " - R$ " + String.format("%.2f", p.getPreco()));
-            }
-            System.out.print("Digite o ID para remover (-1 volta): ");
-            int idDel = sc.nextInt();
-            if(idDel >= 0 && idDel < produtosPedidoAtual.size()) {
-                Produtos rem = produtosPedidoAtual.remove(idDel);
-                System.out.println(">> " + rem.getNome() + " removido!");
-            }
-        }
-        continue; // Volta para o menu
-    }
-    // ----------------------------------------------
-                        if(opc2 == 11){
+
+                        // Requisito CRUD: delete
+                        if (opc2 == 12) {
+                            if (produtosPedidoAtual.isEmpty()) {
+                                System.out.println(">> Carrinho vazio! Nada para remover.");
+                            } else {
+                                System.out.println("\n=== REMOVER ITEM ===");
+                                for (int i = 0; i < produtosPedidoAtual.size(); i++) {
+                                    // mostra [ID] Nome - Preço
+                                    Produtos p = produtosPedidoAtual.get(i);
+                                    System.out.println("[" + i + "] " + p.getNome() + " - R$ " + String.format("%.2f", p.getPreco()));
+                                }
+                                System.out.print("Digite o ID para remover (-1 volta): ");
+                                int idDel = sc.nextInt();
+
+                                if (idDel >= 0 && idDel < produtosPedidoAtual.size()) {
+                                    Produtos removido = produtosPedidoAtual.remove(idDel);
+                                    System.out.println(">> Item removido: " + removido.getNome());
+                                } else if (idDel != -1) {
+                                    System.out.println(">> ID inválido.");
+                                }
+                            }
+                            continue; // volta para o menu de produtos
+                        }
+
+                        if (opc2 == 11) {
                             produtosPedidoAtual.clear();
                             System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                             break;
                         }
-                        if(opc2 == 10){
+
+                        if (opc2 == 10) {
                             System.out.print("\n=========================\nPedido concluído! Aguarde a entrega...\n=========================\n");
                             break;
                         }
-                        switch (opc2){
-                            case 1://hamburguer
+                        switch (opc2) {
+                            case 1: //hamburguer
                                 System.out.print("\n=========================\n[1] Simples\n[2] Duplo\n[3] Triplo\n[4] Cancelar\n=========================\n");
 
-                                while(true){
-                                    try{
+                                while (true) {
+                                    try {
                                         System.out.print("Opção: ");
                                         opc3 = sc.nextInt();
 
-                                        if(opc3 < 1 || opc3 > 4){
+                                        if (opc3 < 1 || opc3 > 4) {
                                             System.out.print("Opção inválida\n");
                                             continue;
                                         }
                                         break;
-                                    } catch (InputMismatchException e){
+                                    } catch (InputMismatchException e) {
                                         System.out.print("Inserção inválida\n");
                                         sc.nextLine();
                                     }
                                 }
-                                if(opc3 == 4){
+                                if (opc3 == 4) {
                                     break;
                                 }
-                                if(simpDuplTrip(produtosPedidoAtual, opc3) == 1){
+                                if (simpDuplTrip(produtosPedidoAtual, opc3) == 1) {
                                     System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                     break;
                                 }
                                 break;
-                            case 2://Croc
+                            case 2: //Croc
 
                                 System.out.print("\n=========================\n[1] Simples\n[2] Parmegiana\n[3] Americano\n[4] Cancelar\n=========================\n");
 
-                                while(true){
-                                    try{
+                                while (true) {
+                                    try {
                                         System.out.print("Opção: ");
                                         opc3 = sc.nextInt();
 
-                                        if(opc3 < 1 || opc3 > 4){
+                                        if (opc3 < 1 || opc3 > 4) {
                                             System.out.print("Opção inválida\n");
                                             continue;
                                         }
                                         break;
-                                    } catch (InputMismatchException e){
+                                    } catch (InputMismatchException e) {
                                         System.out.print("Inserção inválida\n");
                                         sc.nextLine();
                                     }
                                 }
-                                if(opc3 == 4){
+                                if (opc3 == 4) {
                                     System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                     break;
                                 }
-                                if(simpParmAmer(produtosPedidoAtual,opc3) == 1){
+                                if (simpParmAmer(produtosPedidoAtual, opc3) == 1) {
                                     System.out.print("\n=========================\nPedido cancelado\n=========================\n");
                                     break;
                                 }
                                 break;
                             case 3: //X-Salada
-                                if(montaXsalada(produtosPedidoAtual) == 1){
+                                if (montaXsalada(produtosPedidoAtual) == 1) {
                                     System.out.print("\n=========================\nPedido cancelado\n=========================\n");
                                     break;
                                 }
                                 break;
-                            case 4://X-egg bacon burguer
-                                if(montaXegg(produtosPedidoAtual) == 1){
+                            case 4: //X-egg bacon burguer
+                                if (montaXegg(produtosPedidoAtual) == 1) {
                                     System.out.print("\n=========================\nPedido cancelado\n=========================\n");
                                     break;
                                 } else {
                                     System.out.print("\n=========================\nX-egg bacon burguer adicionado ao carrinho!\n=========================\n");
                                     break;
                                 }
-                            case 5://Burguer Americano
+                            case 5: //Burguer Americano
 
                                 System.out.print("\n=========================\n[1] Simples\n[2] Duplo\n[3] Triplo\n[4] Cancelar\n=========================\n");
 
-                                while(true){
-                                    try{
+                                while (true) {
+                                    try {
                                         System.out.print("Opção: ");
                                         opc3 = sc.nextInt();
 
-                                        if(opc3 < 1 || opc3 > 4){
+                                        if (opc3 < 1 || opc3 > 4) {
                                             System.out.print("Opção inválida\n");
                                             continue;
                                         }
                                         break;
-                                    } catch (InputMismatchException e){
+                                    } catch (InputMismatchException e) {
                                         System.out.print("Inserção inválida\n");
                                         sc.nextLine();
                                     }
                                 }
-                                if(opc3 == 4){
+                                if (opc3 == 4) {
                                     System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                     break;
                                 }
-                                if(burSimpDuplTrip(produtosPedidoAtual, opc3) == 1){
+                                if (burSimpDuplTrip(produtosPedidoAtual, opc3) == 1) {
                                     System.out.print("\n=========================\nPedido cancelado\n=========================\n");
                                     break;
                                 }
@@ -439,7 +447,7 @@ public class Main {
                             case 6:
                                 //Box Combo
                                 ArrayList<Produtos> box = new ArrayList<>();
-                                
+
                                 System.out.print("\n=========================\nHamburguer 1:\n[1] Hamburguer (simples/ duplo/ triplo)\n[2] Croc (simples/ parmegiana/ americano)\n[3] X-salada\n[4] X-egg bacon burguer\n[5] Burguer americano (simples/ duplo/ triplo)\n[6] Vazio\n[7] Cancelar Pedido\n\n=========================\n");
 
                                 while (true) {
@@ -456,14 +464,14 @@ public class Main {
                                         sc.nextLine();
                                     }
                                 }
-                                if(opc3 == 7){
+                                if (opc3 == 7) {
                                     System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                     break;
                                 }
-                                
-                                if(opc3 == 1){
+
+                                if (opc3 == 1) {
                                     System.out.print("\n=========================\n[1] Simples\n[2] Duplo\n[3] Triplo\n[4] Cancelar Pedido\n=========================\n");
-                                    
+
                                     while (true) {
                                         try {
                                             System.out.print("Opção: ");
@@ -478,15 +486,15 @@ public class Main {
                                             sc.nextLine();
                                         }
                                     }
-                                    if(opc4 == 4){
+                                    if (opc4 == 4) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                    if(simpDuplTrip(box, opc4) == 1){
+                                    if (simpDuplTrip(box, opc4) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                } else if(opc3 == 2) {
+                                } else if (opc3 == 2) {
                                     System.out.print("\n=========================\n1] Simples\n[2] Parmegiana\n[3] Americano\n[4] Cancelar pedido\n=========================\n");
 
                                     while (true) {
@@ -503,25 +511,25 @@ public class Main {
                                             sc.nextLine();
                                         }
                                     }
-                                    if(opc4 == 4){
+                                    if (opc4 == 4) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                    if(simpParmAmer(box, opc4) == 1){
+                                    if (simpParmAmer(box, opc4) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                } else if(opc3 == 3){
-                                    if(montaXsalada(box) == 1){
+                                } else if (opc3 == 3) {
+                                    if (montaXsalada(box) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                } else if (opc3 == 4){
-                                    if(montaXegg(box) == 1){
+                                } else if (opc3 == 4) {
+                                    if (montaXegg(box) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                } else if (opc3 == 5){
+                                } else if (opc3 == 5) {
                                     System.out.print("\n=========================\n[1] Simples\n[2] Duplo\n[3] Triplo\n[4] Cancelar Pedido\n=========================\n");
 
                                     while (true) {
@@ -538,15 +546,15 @@ public class Main {
                                             sc.nextLine();
                                         }
                                     }
-                                    if(opc4 == 4){
+                                    if (opc4 == 4) {
                                         System.out.print("\n=========================\nPedido Cancelado!\n=========================\n");
                                         break;
                                     }
-                                    if(burSimpDuplTrip(box, opc4) == 1){
+                                    if (burSimpDuplTrip(box, opc4) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                     }
                                 } else {
-                                   System.out.print("Sem hamburguer 1\n");
+                                    System.out.print("Sem hamburguer 1\n");
                                 }
                                 //hamburguer 2
                                 System.out.print("\n=========================\nHamburguer 2:\n[1] Hamburguer (simples/ duplo/ triplo)\n[2] Croc (simples/ parmegiana/ americano)\n[3] X-salada\n[4] X-egg bacon burguer\n[5] Burguer americano (simples/ duplo/ triplo)\n[6] Vazio\n[7] Cancelar Pedido\n\n=========================\n");
@@ -565,12 +573,12 @@ public class Main {
                                         sc.nextLine();
                                     }
                                 }
-                                if(opc3 == 7){
+                                if (opc3 == 7) {
                                     System.out.print("\n=========================\nPedido cancelado\n=========================\n");
                                     break;
                                 }
 
-                                if(opc3 == 1){
+                                if (opc3 == 1) {
                                     System.out.print("\n=========================\n[1] Simples\n[2] Duplo\n[3] Triplo\n[4] Cancelar\n=========================\n");
 
                                     while (true) {
@@ -587,15 +595,15 @@ public class Main {
                                             sc.nextLine();
                                         }
                                     }
-                                    if(opc4 == 4){
+                                    if (opc4 == 4) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                    if(simpDuplTrip(box, opc4) == 1){
+                                    if (simpDuplTrip(box, opc4) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                } else if(opc3 == 2) {
+                                } else if (opc3 == 2) {
                                     System.out.print("\n=========================\n[1] Simples\n[2] Parmegiana\n[3] Americano\n[4] Cancelar Pedido\n=========================\n");
 
                                     while (true) {
@@ -612,25 +620,25 @@ public class Main {
                                             sc.nextLine();
                                         }
                                     }
-                                    if(opc4 == 4){
+                                    if (opc4 == 4) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                    if (simpParmAmer(box, opc4) == 1){
+                                    if (simpParmAmer(box, opc4) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                } else if(opc3 == 3){
-                                    if(montaXsalada(box) == 1){
+                                } else if (opc3 == 3) {
+                                    if (montaXsalada(box) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                } else if (opc3 == 4){
-                                    if(montaXegg(box) == 1){
+                                } else if (opc3 == 4) {
+                                    if (montaXegg(box) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                } else if (opc3 == 5){
+                                } else if (opc3 == 5) {
                                     System.out.print("\n=========================\n[1] Simples\n[2] Duplo\n[3] Triplo\n[4] Cancelar Pedido\n=========================\n");
 
                                     while (true) {
@@ -647,11 +655,11 @@ public class Main {
                                             sc.nextLine();
                                         }
                                     }
-                                    if(opc4 == 4){
+                                    if (opc4 == 4) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
-                                    if(burSimpDuplTrip(box, opc4) == 1){
+                                    if (burSimpDuplTrip(box, opc4) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
@@ -676,15 +684,15 @@ public class Main {
                                         sc.nextLine();
                                     }
                                 }
-                                if(opc3 == 6){
+                                if (opc3 == 6) {
                                     System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                     break;
                                 }
 
-                                if(opc3 == 5){
+                                if (opc3 == 5) {
                                     System.out.print("Sem bebida 1\n");
                                 } else {
-                                    if(bebidaOpc(box, opc3) == 1){
+                                    if (bebidaOpc(box, opc3) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
@@ -708,14 +716,14 @@ public class Main {
                                         sc.nextLine();
                                     }
                                 }
-                                if(opc3 == 6){
+                                if (opc3 == 6) {
                                     System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                     break;
                                 }
-                                if(opc3 == 5){
+                                if (opc3 == 5) {
                                     System.out.print("Sem bebida 2\n");
                                 } else {
-                                    if(bebidaOpc(box, opc3) == 1){
+                                    if (bebidaOpc(box, opc3) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
@@ -738,12 +746,12 @@ public class Main {
                                         sc.nextLine();
                                     }
                                 }
-                                if(opc3 == 3){
+                                if (opc3 == 3) {
                                     System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                     break;
                                 }
-                                if(opc3 == 1){
-                                    if(montaSorvete(box) == 1){
+                                if (opc3 == 1) {
+                                    if (montaSorvete(box) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
@@ -768,11 +776,11 @@ public class Main {
                                         sc.nextLine();
                                     }
                                 }
-                                if(opc3 == 4){
+                                if (opc3 == 4) {
                                     System.out.print("\n=========================\nPedido cancelado\n=========================\n");
                                     break;
                                 }
-                                if(opc3 == 3){
+                                if (opc3 == 3) {
                                     System.out.print("Sem porções\n");
                                 } else {
                                     batataFile(box, opc3);
@@ -781,23 +789,23 @@ public class Main {
                                 //se lista de produtos estiver vazia, lançar execption e cancelar o box no pedido
                                 //se nao:
                                 Box boxtotal = new Box(box);
-                                try{
+                                try {
                                     Verificador a = new Verificador();
                                     a.verificaLista(box);
-                                }catch(ListaVaziaException e){
+                                } catch (ListaVaziaException e) {
                                     System.out.print(e.getMessage());
                                     break;
                                 }
                                 produtosPedidoAtual.add(boxtotal);
                                 break;
                                 //implementa montagem do combo a partir do que da pra colocar
-                            case 7://Sorvete
-                                if(montaSorvete(produtosPedidoAtual) == 1){
+                            case 7: //Sorvete
+                                if (montaSorvete(produtosPedidoAtual) == 1) {
                                     System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                     break;
                                 }
                                 break;
-                            case 8://batata frita
+                            case 8: //batata frita
                                 System.out.print("\n=========================\n[1] Batata frita\n[2] Filé de frango empanado\n[3] Cancelar pedido\n=========================\n");
 
                                 while (true) {
@@ -815,13 +823,13 @@ public class Main {
                                         sc.nextLine();
                                     }
                                 }
-                                if(opc3 == 3){
+                                if (opc3 == 3) {
                                     System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                     break;
                                 }
                                 batataFile(produtosPedidoAtual, opc3);
                                 break;
-                            case 9://bebidas
+                            case 9: //bebidas
                                 System.out.print("\n=========================\n[1] Refrigerante (refil/lata)\n[2] Sucos (laranja/dell vale)\n[3] Chá gelado\n[4] Água(mineral/ com gás/ saborizada)\n[5] Cancelar pedido\n\n=========================\n");
 
                                 while (true) {
@@ -840,11 +848,11 @@ public class Main {
                                     }
                                 }
 
-                                if(opc3 == 5){
+                                if (opc3 == 5) {
                                     System.out.print("\n=========================\nPedido canceldo!\n=========================\n");
                                     break;
                                 } else {
-                                    if(bebidaOpc(produtosPedidoAtual, opc3) == 1){
+                                    if (bebidaOpc(produtosPedidoAtual, opc3) == 1) {
                                         System.out.print("\n=========================\nPedido cancelado!\n=========================\n");
                                         break;
                                     }
@@ -855,8 +863,8 @@ public class Main {
                     try {
                         Verificador e = new Verificador();
                         e.verificaLista(produtosPedidoAtual);
-                    }catch (ListaVaziaException e){
-                        System.out.print(e.getMessage()+"\nPedido cancelado!\n=========================\n");
+                    } catch (ListaVaziaException e) {
+                        System.out.print(e.getMessage() + "\nPedido cancelado!\n=========================\n");
                         break;
                     }
                     id++;
@@ -864,8 +872,8 @@ public class Main {
                     caixa.getPedidos().add(pedidoatual);
                     break;
                 case 2:
-                    while(true){
-                        if(caixa.getPedidos().isEmpty()){
+                    while (true) {
+                        if (caixa.getPedidos().isEmpty()) {
                             System.out.print("\n=========================\nLista de pedidos vazia, adicione um pedido!\n=========================\n");
                             break;
                         }
@@ -886,16 +894,16 @@ public class Main {
                             }
                         }
 
-                        if(caixa.getPedidos().get(0).getId() < opc2){
-                            System.out.print("O pedido "+caixa.getPedidos().get(0).getId()+" de "+caixa.getPedidos().get(0).getNome()+" precisa ser entregue antes de pedidos posteriores\n");
+                        if (caixa.getPedidos().get(0).getId() < opc2) {
+                            System.out.print("O pedido " + caixa.getPedidos().get(0).getId() + " de " + caixa.getPedidos().get(0).getNome() + " precisa ser entregue antes de pedidos posteriores\n");
                             break;
-                        } else if(caixa.getPedidos().get(0).getId() > opc2){
-                            System.out.print("O pedido de id "+opc2+" já foi entregue.\n");
+                        } else if (caixa.getPedidos().get(0).getId() > opc2) {
+                            System.out.print("O pedido de id " + opc2 + " já foi entregue.\n");
                             break;
                         } else {
                             caixa.addAoValorTotal(caixa.getPedidos().get(0));
                             caixa.getPedidos().remove(0);
-                            System.out.print("\n=========================\nPedido do ID: "+opc2+" foi entregue!\n=========================\n");
+                            System.out.print("\n=========================\nPedido do ID: " + opc2 + " foi entregue!\n=========================\n");
                             break;
                         }
                     }
@@ -908,37 +916,37 @@ public class Main {
                     break;
                     //exibe tabela com pedidos pendentes
                 case 4:
-                    System.out.print("\n=========================\nSaldo atual do caixa: "+caixa.getValorTotal()+"\n=========================\n");
+                    System.out.print("\n=========================\nSaldo atual do caixa: " + caixa.getValorTotal() + "\n=========================\n");
                     break;
                 case 5:
                     System.out.print("\n=========================\nPreparando para fechamendo de caixa...\n");
-                    try{
+                    try {
                         Verificador s = new Verificador();
                         s.verificaPedidosPendentes(caixa.getPedidos());
-                    } catch (ListaPendenteException s){
-                        System.out.print(s.getMessage()+"\n=========================\n");
+                    } catch (ListaPendenteException s) {
+                        System.out.print(s.getMessage() + "\n=========================\n");
                         break;
                     }
-                    System.out.print("\nValor final: "+caixa.getValorTotal()+"\n");
+                    System.out.print("\nValor final: " + caixa.getValorTotal() + "\n");
                     System.out.print("\nFechamento concluído!\n=========================\n");
                     vaifechar = 1;
                     break;
 
             }
-            if(vaifechar == 1){
+            if (vaifechar == 1) {
                 break;
             }
-        } 
+        }
     }
-    static void testeCriarProdutos(){
+    static void testeCriarProdutos() {
 
         Scanner sc = new Scanner(System.in);
         System.out.print("\n === Executando teste Criar Produtos === \n");
         System.out.print("\nDigite qualquer coisa para prosseguir.\n");
-        sc.nextLine();  
+        sc.nextLine();
 
         Caixa caixaTeste = new Caixa();
-        ArrayList <Produtos> PedidoTeste = new ArrayList<>();
+        ArrayList<Produtos> PedidoTeste = new ArrayList<>();
 
         PedidoTeste.add(new HamburguerSimples(1));
         PedidoTeste.add(new HamburguerSimples(2));
@@ -975,19 +983,19 @@ public class Main {
         sc.nextLine();
 
     }
-    static void testeRemoverProdutos(){
+    static void testeRemoverProdutos() {
 
         Scanner sc = new Scanner(System.in);
         System.out.print("\n === Executando teste Remover Produtos === \n");
         System.out.print("\nDigite qualquer coisa para prosseguir.\n");
-        sc.nextLine();       
+        sc.nextLine();
 
         Caixa caixaTeste = new Caixa();
-        ArrayList <Produtos> PedidoTeste = new ArrayList<>();
+        ArrayList<Produtos> PedidoTeste = new ArrayList<>();
 
         Hamburguer hamburguer1 = new HamburguerSimples(1);
         Hamburguer hamburguer2 = new HamburguerSimples(2);
-        HamburguerDuplo hamburguerduplo1 = new HamburguerDuplo(1);        
+        HamburguerDuplo hamburguerduplo1 = new HamburguerDuplo(1);
         HamburguerDuplo hamburguerduplo2 = new HamburguerDuplo(2);
         HamburguerTriplo hamburguertriplo = new HamburguerTriplo();
         CrocSimples crocsimples = new CrocSimples();
@@ -999,217 +1007,217 @@ public class Main {
         BurguerAmericanoDuplo burgueramericanoduplo = new BurguerAmericanoDuplo();
         BurguerAmericanoTriplo burgueramericanotriplo = new BurguerAmericanoTriplo();
 
-        for(int opc1 = 1; opc1 < 20; opc1++) {
-                //hamburguer simples de frango
-                // System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer\n[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Frango\n[8] Pronto\n");
-                while(true) {
-                    if(opc1 < 1 || opc1 > 8) {
-                        //
-                        break;
-                    }
-                    if(opc1 == 8) {
-                        break;
-                    } else if(opc1 == 7) {
-                        hamburguer1.remove(Ingredientes.values()[opc1]);
-                    } else {
-                        hamburguer1.remove(Ingredientes.values()[opc1 - 1]);
-                    }
+        for (int opc1 = 1; opc1 < 20; opc1++) {
+            //hamburguer simples de frango
+            // System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer\n[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Frango\n[8] Pronto\n");
+            while (true) {
+                if (opc1 < 1 || opc1 > 8) {
+                    //
                     break;
                 }
-                //hamburguer simples de carne
-                /*// System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer\n" +
-                        "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n [7] Carne\n[8] Pronto\n");*/
-                while(true) {
-                    if(opc1 < 1 || opc1 > 8) {
-                        break;
-                    }
-                    if(opc1 == 8) {
-                        break;
-                    } else {
-                        hamburguer2.remove(Ingredientes.values()[opc1 - 1]);
-                    }
+                if (opc1 == 8) {
+                    break;
+                } else if (opc1 == 7) {
+                    hamburguer1.remove(Ingredientes.values()[opc1]);
+                } else {
+                    hamburguer1.remove(Ingredientes.values()[opc1 - 1]);
+                }
+                break;
+            }
+            //hamburguer simples de carne
+            /*// System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer\n" +
+                    "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n [7] Carne\n[8] Pronto\n");*/
+            while (true) {
+                if (opc1 < 1 || opc1 > 8) {
                     break;
                 }
-                //hamburguer duplo de frango
-                /*// System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer 1\n" +
-                    "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Frango\n[8] Salsicha\n[9] Hamburguer 2\n[10] Pronto\n");*/
-                while(true) {
-                    if(opc1 < 1 || opc1 > 10) {
-                        break;
-                    }
-                    if(opc1 == 10) {
-                        break;
-                    } else if(opc1 == 7 || opc1 == 8 || opc1 == 9) {
-                        hamburguerduplo1.remove(Ingredientes.values()[opc1]);
-                    } else {
-                        hamburguerduplo1.remove(Ingredientes.values()[opc1 - 1]);
-                    }
+                if (opc1 == 8) {
+                    break;
+                } else {
+                    hamburguer2.remove(Ingredientes.values()[opc1 - 1]);
+                }
+                break;
+            }
+            //hamburguer duplo de frango
+            /*// System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer 1\n" +
+                "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Frango\n[8] Salsicha\n[9] Hamburguer 2\n[10] Pronto\n");*/
+            while (true) {
+                if (opc1 < 1 || opc1 > 10) {
                     break;
                 }
-                //hamburguer duplo de carne
-                /*
-                        // System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer 1\n" +
-                                "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Carne\n[8] Salsicha\n[9] Hamburguer 2\n[10] Pronto\n");
-                */
-                while(true) {
-                    if(opc1 < 1 || opc1 > 10) {
-                        break;
-                    }
-                    if(opc1 == 10) {
-                        break;
-                    } else if(opc1 == 8 || opc1 == 9) {
-                        hamburguerduplo2.remove(Ingredientes.values()[opc1]);
-                    } else {
-                        hamburguerduplo2.remove(Ingredientes.values()[opc1 - 1]);
-                    }
+                if (opc1 == 10) {
+                    break;
+                } else if (opc1 == 7 || opc1 == 8 || opc1 == 9) {
+                    hamburguerduplo1.remove(Ingredientes.values()[opc1]);
+                } else {
+                    hamburguerduplo1.remove(Ingredientes.values()[opc1 - 1]);
+                }
+                break;
+            }
+            //hamburguer duplo de carne
+            /*
+                    // System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer 1\n" +
+                            "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Carne\n[8] Salsicha\n[9] Hamburguer 2\n[10] Pronto\n");
+            */
+            while (true) {
+                if (opc1 < 1 || opc1 > 10) {
                     break;
                 }
-                //hamburguer triplo
-                /*
-                // System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer 1\n" +
-                        "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Carne\n[8] Frango\n" +
-                        "[9] Salsicha\n[10] Hamburguer 2\n [11] Hamburguer 3\n[12] Salada 2\n [13] Pronto\n");
-                */
-                while(true) {
-                    if(opc1 < 1 || opc1 > 13) {
-                        break;
-                    }
-                    if(opc1 == 13) {
-                        break;
-                    } else {
-                        hamburguertriplo.remove(Ingredientes.values()[opc1 - 1]);
-                    }
+                if (opc1 == 10) {
+                    break;
+                } else if (opc1 == 8 || opc1 == 9) {
+                    hamburguerduplo2.remove(Ingredientes.values()[opc1]);
+                } else {
+                    hamburguerduplo2.remove(Ingredientes.values()[opc1 - 1]);
+                }
+                break;
+            }
+            //hamburguer triplo
+            /*
+            // System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer 1\n" +
+                    "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Carne\n[8] Frango\n" +
+                    "[9] Salsicha\n[10] Hamburguer 2\n [11] Hamburguer 3\n[12] Salada 2\n [13] Pronto\n");
+            */
+            while (true) {
+                if (opc1 < 1 || opc1 > 13) {
                     break;
                 }
-                //Croc simples
-                /*
-                                // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n[2]Frango Empanado\n" +
-                                        "[3] Salada\n[4] Maionese\n[5] Queijo\n[6] Pronto\n");
-                */
-                while(true) {
-                    if(opc1 < 1 || opc1 > 6) {
-                        break;
-                    }
-                    if(opc1 == 6) {
-                        break;
-                    } else {
-                        crocsimples.remove(IngredientesCroc.values()[opc1 - 1]);
-                    }
+                if (opc1 == 13) {
+                    break;
+                } else {
+                    hamburguertriplo.remove(Ingredientes.values()[opc1 - 1]);
+                }
+                break;
+            }
+            //Croc simples
+            /*
+                            // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n[2]Frango Empanado\n" +
+                                    "[3] Salada\n[4] Maionese\n[5] Queijo\n[6] Pronto\n");
+            */
+            while (true) {
+                if (opc1 < 1 || opc1 > 6) {
                     break;
                 }
-                //croc parmegiana
-                // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n" +
-                //            "[2] Frango empanado\n[3] Salada\n[4] Maionese\n[5] Queijo\n[6] Molho de tomate\n[7] Tomate (adicional)\n[8] Pronto");
-    
-                while(true) {
-                    if(opc1 < 1 || opc1 > 8) {
-                        break;
-                    }
-                    //remocao
-                    if(opc1 == 8) {
-                        break;
-                    } else {
-                        crocparmegiana.remove(IngredientesCroc.values()[opc1 - 1]);
-                    }
+                if (opc1 == 6) {
+                    break;
+                } else {
+                    crocsimples.remove(IngredientesCroc.values()[opc1 - 1]);
+                }
+                break;
+            }
+            //croc parmegiana
+            // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n" +
+            //            "[2] Frango empanado\n[3] Salada\n[4] Maionese\n[5] Queijo\n[6] Molho de tomate\n[7] Tomate (adicional)\n[8] Pronto");
+
+            while (true) {
+                if (opc1 < 1 || opc1 > 8) {
                     break;
                 }
-                //Croc americano
-                // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n[2] Frango Empanado\n" +
-                //        "[3] Salada\n[4] Maionese\n[5] Queijo\n[6] Salada americana\n[7] Cebola\n[8] Molho defumado\n[9] Pronto\n");
-                while(true) {
-                    if(opc1 < 1 || opc1 > 9) {
-                        break;
-                    }
-                    //remocao
-                    if(opc1 == 9) {
-                        break;
-                    } else if(opc1 == 6 || opc1 == 7 || opc1 == 8) {
-                        crocamericano.remove(IngredientesCroc.values()[opc1 + 1]);
-                    } else {
-                        crocamericano.remove(IngredientesCroc.values()[opc1 - 1]);
-                    }
+                //remocao
+                if (opc1 == 8) {
+                    break;
+                } else {
+                    crocparmegiana.remove(IngredientesCroc.values()[opc1 - 1]);
+                }
+                break;
+            }
+            //Croc americano
+            // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n[2] Frango Empanado\n" +
+            //        "[3] Salada\n[4] Maionese\n[5] Queijo\n[6] Salada americana\n[7] Cebola\n[8] Molho defumado\n[9] Pronto\n");
+            while (true) {
+                if (opc1 < 1 || opc1 > 9) {
                     break;
                 }
-                //X salada
-                // System.out.print("Qual ingrediente deseja remover?\n");
-                // System.out.print("[1] Pão\n[2] Hamburguer\n[3] Queijo Mussarela\n[4] Tomate\n[5] Alface\n[6] Maionese\n [7] Pronto\n");
-                while(true) {
-                    if(opc1 < 1 || opc1 > 7) {
-                        break;
-                    }
-                    //remocao
-                    if(opc1 == 7) {
-                        break;
-                    } else {
-                        xsalada.remove(IngredientesXSalada.values()[opc1 - 1]);
-                        // System.out.print("Ingrediente removido.\n");
-                    }
+                //remocao
+                if (opc1 == 9) {
+                    break;
+                } else if (opc1 == 6 || opc1 == 7 || opc1 == 8) {
+                    crocamericano.remove(IngredientesCroc.values()[opc1 + 1]);
+                } else {
+                    crocamericano.remove(IngredientesCroc.values()[opc1 - 1]);
+                }
+                break;
+            }
+            //X salada
+            // System.out.print("Qual ingrediente deseja remover?\n");
+            // System.out.print("[1] Pão\n[2] Hamburguer\n[3] Queijo Mussarela\n[4] Tomate\n[5] Alface\n[6] Maionese\n [7] Pronto\n");
+            while (true) {
+                if (opc1 < 1 || opc1 > 7) {
                     break;
                 }
-                //X egg Bacon burguer
-                // System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer\n" +
-                //        "[2] Cheddar\n[3] Ovo\n[4] Bacon\n[5] Maionese\n[6] Pão\n[7] Pronto");
-                while(true) {
-                    if(opc1 < 1 || opc1 > 7) {
-                        break;
-                    }
-                    //remocao
-                    if(opc1 == 7) {
-                        break;
-                    } else {
-                        xbb.remove(IngredientesXBB.values()[opc1 - 1]);
-                    }
+                //remocao
+                if (opc1 == 7) {
+                    break;
+                } else {
+                    xsalada.remove(IngredientesXSalada.values()[opc1 - 1]);
+                    // System.out.print("Ingrediente removido.\n");
+                }
+                break;
+            }
+            //X egg Bacon burguer
+            // System.out.print("Qual ingrediente deseja remover?\n[1] Hamburguer\n" +
+            //        "[2] Cheddar\n[3] Ovo\n[4] Bacon\n[5] Maionese\n[6] Pão\n[7] Pronto");
+            while (true) {
+                if (opc1 < 1 || opc1 > 7) {
                     break;
                 }
-                //Americano simples
-                // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n[2] Hamburguer\n" +
-                //        "[3] Salada Americana\n[4] Cebola Picada\n[5] Molho Defumado\n[6] Maionese\n[7] Pronto\n");
-                while(true) {
-                    if(opc1 < 1 || opc1 > 7) {
-                        break;
-                    }
-                    //remocao
-                    if(opc1 == 7) {
-                        break;
-                    } else {
-                        burgueramericano.remove(IngredientesBurguerAmericano.values()[opc1 - 1]);
-                        // System.out.print("Ingrediente removido.\n");
-                    }
+                //remocao
+                if (opc1 == 7) {
+                    break;
+                } else {
+                    xbb.remove(IngredientesXBB.values()[opc1 - 1]);
+                }
+                break;
+            }
+            //Americano simples
+            // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n[2] Hamburguer\n" +
+            //        "[3] Salada Americana\n[4] Cebola Picada\n[5] Molho Defumado\n[6] Maionese\n[7] Pronto\n");
+            while (true) {
+                if (opc1 < 1 || opc1 > 7) {
                     break;
                 }
-                //americano duplo
-                // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n[2] Hamburguer\n" +
-                //        "[3] Salada Americana\n[4] Cebola Picada\n[5] Molho Defumado\n[6] Maionese\n[7] Hamburguer 2\n[8] Pronto\n");
-                while(true) {
-                    if(opc1 < 1 || opc1 > 8) {
-                        break;
-                    }
-                    //remocao
-                    if(opc1 == 8) {
-                        break;
-                    } else {
-                        burgueramericanoduplo.remove(IngredientesBurguerAmericano.values()[opc1 - 1]);
-                        // System.out.print("Ingrediente removido.\n");
-                    }
+                //remocao
+                if (opc1 == 7) {
+                    break;
+                } else {
+                    burgueramericano.remove(IngredientesBurguerAmericano.values()[opc1 - 1]);
+                    // System.out.print("Ingrediente removido.\n");
+                }
+                break;
+            }
+            //americano duplo
+            // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n[2] Hamburguer\n" +
+            //        "[3] Salada Americana\n[4] Cebola Picada\n[5] Molho Defumado\n[6] Maionese\n[7] Hamburguer 2\n[8] Pronto\n");
+            while (true) {
+                if (opc1 < 1 || opc1 > 8) {
                     break;
                 }
-                //americano triplo
-                // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n[2] Hamburguer\n" +
-                //        "[3] Salada Americana\n[4] Cebola Picada\n[5] Molho Defumado\n[6] Maionese\n" +
-                //        "[7] Hamburguer 2\n[8] Hamburguer 3\n[9] Pronto\n");
-                while(true) {
-                    if(opc1 < 1 || opc1 > 9) {
-                        break;
-                    }
-                    //remocao
-                    if(opc1 == 9) {
-                        break;
-                    } else {
-                        burgueramericanotriplo.remove(IngredientesBurguerAmericano.values()[opc1 - 1]);
-                        // System.out.print("Ingrediente removido.\n");
-                    }
+                //remocao
+                if (opc1 == 8) {
                     break;
-                }    
+                } else {
+                    burgueramericanoduplo.remove(IngredientesBurguerAmericano.values()[opc1 - 1]);
+                    // System.out.print("Ingrediente removido.\n");
+                }
+                break;
+            }
+            //americano triplo
+            // System.out.print("Qual ingrediente deseja remover?\n[1] Pão\n[2] Hamburguer\n" +
+            //        "[3] Salada Americana\n[4] Cebola Picada\n[5] Molho Defumado\n[6] Maionese\n" +
+            //        "[7] Hamburguer 2\n[8] Hamburguer 3\n[9] Pronto\n");
+            while (true) {
+                if (opc1 < 1 || opc1 > 9) {
+                    break;
+                }
+                //remocao
+                if (opc1 == 9) {
+                    break;
+                } else {
+                    burgueramericanotriplo.remove(IngredientesBurguerAmericano.values()[opc1 - 1]);
+                    // System.out.print("Ingrediente removido.\n");
+                }
+                break;
+            }
             //loop            
         }
 
@@ -1231,15 +1239,15 @@ public class Main {
 
         caixaTeste.getPedidos().add(PedidoComNada);
         caixaTeste.exibePedidosTeste();
-        
+
         System.out.print("\nTeste finalizado\nDigite qualquer coisa para prosseguir\n");
         sc.nextLine();
     }
-    static int montaHambSimp(ArrayList<Produtos> produtos, int i){
+    static int montaHambSimp(ArrayList<Produtos> produtos, int i) {
         Scanner sc = new Scanner(System.in);
         int opc, opc1;
 
-        if (i == 1) {//hamburguer simples de frango
+        if (i == 1) { //hamburguer simples de frango
             Hamburguer hamburguer = new HamburguerSimples(i);
 
             System.out.print("\n=========================\nDeseja remover algum ingrediente?\n[1] Sim\n[2] Concluir\n[3] Cancelar pedido\n=========================\n");
@@ -1259,13 +1267,13 @@ public class Main {
                     sc.nextLine();
                 }
             }
-            if(opc == 3){
+            if (opc == 3) {
                 return 1;
             }
             if (opc == 1) {
                 while (true) {
                     System.out.print("\n=========================\nQual ingrediente deseja remover?\n[1] Hamburguer\n[2] Pão\n[3] Salada\n" +
-                            "[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Frango\n[8] Pronto\n[9] Cancelar pedido\n=========================\n");
+                        "[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Frango\n[8] Pronto\n[9] Cancelar pedido\n=========================\n");
 
                     while (true) {
                         try {
@@ -1282,7 +1290,7 @@ public class Main {
                             sc.nextLine();
                         }
                     }
-                    if(opc1 == 9){
+                    if (opc1 == 9) {
                         return 1;
                     }
                     if (opc1 == 8) {
@@ -1300,7 +1308,7 @@ public class Main {
             return 0;
         }
 
-        if (i == 2) {//hamburguer simples de carne
+        if (i == 2) { //hamburguer simples de carne
             Hamburguer hamburguer = new HamburguerSimples(i);
 
             System.out.print("\n=========================\nDeseja remover algum ingrediente?\n[1] Sim\n[2] Concluir\n[3] Cancelar pedido\n=========================\n");
@@ -1320,13 +1328,13 @@ public class Main {
                     sc.nextLine();
                 }
             }
-            if(opc == 3){
+            if (opc == 3) {
                 return 1;
             }
             if (opc == 1) {
                 while (true) {
                     System.out.print("\n=========================\nQual ingrediente deseja remover?\n[1] Hamburguer\n" +
-                            "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Carne\n[8] Pronto\n[9] Cancelar pedido\n=========================\n");
+                        "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Carne\n[8] Pronto\n[9] Cancelar pedido\n=========================\n");
 
                     while (true) {
                         try {
@@ -1343,7 +1351,7 @@ public class Main {
                             sc.nextLine();
                         }
                     }
-                    if(opc1 == 9){
+                    if (opc1 == 9) {
                         return 1;
                     }
                     if (opc1 == 8) {
@@ -1360,11 +1368,11 @@ public class Main {
         }
         return 1;
     }
-    static int montaHambDupl(ArrayList<Produtos> produtos, int i){
+    static int montaHambDupl(ArrayList<Produtos> produtos, int i) {
         Scanner sc = new Scanner(System.in);
         int opc, opc1;
 
-        if (i == 1) {//hamburguer duplo de frango
+        if (i == 1) { //hamburguer duplo de frango
             HamburguerDuplo hamburguerDuplo = new HamburguerDuplo(i);
 
             System.out.print("\n=========================\nDeseja remover algum ingrediente?\n[1] Sim\n[2] Não\n[3] Cancelar pedido\n=========================\n");
@@ -1384,7 +1392,7 @@ public class Main {
                     sc.nextLine();
                 }
             }
-            if(opc == 3){
+            if (opc == 3) {
                 return 1;
             }
             if (opc == 1) {
@@ -1408,7 +1416,7 @@ public class Main {
                             sc.nextLine();
                         }
                     }
-                    if(opc1 == 11){
+                    if (opc1 == 11) {
                         return 1;
                     }
                     if (opc1 == 10) {
@@ -1426,7 +1434,7 @@ public class Main {
             return 0;
         }
 
-        if (i == 2) {//hamburguer duplo de carne
+        if (i == 2) { //hamburguer duplo de carne
             HamburguerDuplo hamburguerDuplo = new HamburguerDuplo(i);
 
             System.out.print("\n=========================\nDeseja remover algum ingrediente?\n[1] Sim\n[2] Não\n[3] Cancelar pedido\n=========================\n");
@@ -1446,7 +1454,7 @@ public class Main {
                     sc.nextLine();
                 }
             }
-            if(opc == 3){
+            if (opc == 3) {
                 return 1;
             }
             if (opc == 1) {
@@ -1454,7 +1462,7 @@ public class Main {
 
                 while (true) {
                     System.out.print("\n=========================\nQual ingrediente deseja remover?\n[1] Hamburguer 1\n" +
-                            "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Carne\n[8] Salsicha\n[9] Hamburguer 2\n[10] Pronto\n[11] Cancelar pedido\n=========================\n");
+                        "[2] Pão\n[3] Salada\n[4] Molho\n[5] Ovo\n[6] Queijo\n[7] Carne\n[8] Salsicha\n[9] Hamburguer 2\n[10] Pronto\n[11] Cancelar pedido\n=========================\n");
 
                     while (true) {
                         try {
@@ -1471,7 +1479,7 @@ public class Main {
                             sc.nextLine();
                         }
                     }
-                    if(opc1 == 11){
+                    if (opc1 == 11) {
                         return 1;
                     }
                     if (opc1 == 10) {
@@ -1490,7 +1498,7 @@ public class Main {
         }
         return 1;
     }
-    static int montaHambTrip(ArrayList<Produtos> produtos){
+    static int montaHambTrip(ArrayList<Produtos> produtos) {
         int opc, opc1;
         Scanner sc = new Scanner(System.in);
 
@@ -1513,7 +1521,7 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 3){
+        if (opc == 3) {
             return 1;
         }
         if (opc == 1) {
@@ -1536,7 +1544,7 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc1 == 14){
+                if (opc1 == 14) {
                     return 1;
                 }
                 if (opc1 == 13) {
@@ -1551,7 +1559,7 @@ public class Main {
         return 0;
     }
 
-    static int montaCrocSimp(ArrayList<Produtos> produtos){
+    static int montaCrocSimp(ArrayList<Produtos> produtos) {
         int opc, opc1;
         Scanner sc = new Scanner(System.in);
 
@@ -1575,7 +1583,7 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 3){
+        if (opc == 3) {
             return 1;
         }
         if (opc == 1) {
@@ -1599,7 +1607,7 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc1 == 7){
+                if (opc1 == 7) {
                     return 1;
                 }
                 if (opc1 == 6) {
@@ -1613,7 +1621,7 @@ public class Main {
         produtos.add(croc);
         return 0;
     }
-    static int montaCrocParm(ArrayList<Produtos> produtos){
+    static int montaCrocParm(ArrayList<Produtos> produtos) {
         int opc, opc1;
         Scanner sc = new Scanner(System.in);
 
@@ -1637,7 +1645,7 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 3){
+        if (opc == 3) {
             return 1;
         }
         if (opc == 1) {
@@ -1645,7 +1653,7 @@ public class Main {
 
             while (true) {
                 System.out.print("\n=========================\nQual ingrediente deseja remover?\n[1] Pão\n" +
-                        "[2] Frango empanado\n[3] Salada\n[4] Maionese\n[5] Queijo\n[6] Molho de tomate\n[7] Tomate (adicional)\n[8] Pronto\n[9] Cancelar pedido\n=========================\n");
+                    "[2] Frango empanado\n[3] Salada\n[4] Maionese\n[5] Queijo\n[6] Molho de tomate\n[7] Tomate (adicional)\n[8] Pronto\n[9] Cancelar pedido\n=========================\n");
 
                 while (true) {
                     try {
@@ -1662,7 +1670,7 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc1 == 9){
+                if (opc1 == 9) {
                     return 1;
                 }
                 if (opc1 == 8) {
@@ -1676,7 +1684,7 @@ public class Main {
         produtos.add(parmegiana);
         return 0;
     }
-    static int montaCrocAmer(ArrayList<Produtos> produtos){
+    static int montaCrocAmer(ArrayList<Produtos> produtos) {
         int opc, opc1;
         Scanner sc = new Scanner(System.in);
 
@@ -1700,7 +1708,7 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 3){
+        if (opc == 3) {
             return 1;
         }
         if (opc == 1) {
@@ -1708,7 +1716,7 @@ public class Main {
 
             while (true) {
                 System.out.print("\n=========================\nQual ingrediente deseja remover?\n[1] Pão\n[2] Frango Empanado\n" +
-                        "[3] Salada\n[4] Maionese\n[5] Queijo\n[6] Salada americana\n[7] Cebola\n[8] Molho defumado\n[9] Pronto\n[10] Cancelar pedido\n=========================\n");
+                    "[3] Salada\n[4] Maionese\n[5] Queijo\n[6] Salada americana\n[7] Cebola\n[8] Molho defumado\n[9] Pronto\n[10] Cancelar pedido\n=========================\n");
 
                 while (true) {
                     try {
@@ -1725,7 +1733,7 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc1 == 10){
+                if (opc1 == 10) {
                     return 1;
                 }
                 if (opc1 == 9) {
@@ -1742,7 +1750,7 @@ public class Main {
         return 0;
     }
 
-    static int montaXsalada(ArrayList<Produtos> produtos){
+    static int montaXsalada(ArrayList<Produtos> produtos) {
         int opc, opc1;
         Scanner sc = new Scanner(System.in);
 
@@ -1765,8 +1773,8 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 3){
-            return  1;
+        if (opc == 3) {
+            return 1;
         }
         if (opc == 1) {
 
@@ -1790,7 +1798,7 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc1 == 8){
+                if (opc1 == 8) {
                     return 1;
                 }
                 if (opc1 == 7) {
@@ -1807,7 +1815,7 @@ public class Main {
         return 0;
     }
 
-    static int montaXegg(ArrayList<Produtos> produtos){
+    static int montaXegg(ArrayList<Produtos> produtos) {
         int opc, opc1;
         Scanner sc = new Scanner(System.in);
 
@@ -1831,13 +1839,13 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 3){
+        if (opc == 3) {
             return 1;
         }
         if (opc == 1) {
             while (true) {
                 System.out.print("\n=========================\nQual ingrediente deseja remover?\n[1] Hamburguer\n" +
-                        "[2] Cheddar\n[3] Ovo\n[4] Bacon\n[5] Maionese\n[6] Pão\n[7] Pronto\n[8] Cancelar pedido\n=========================\n");
+                    "[2] Cheddar\n[3] Ovo\n[4] Bacon\n[5] Maionese\n[6] Pão\n[7] Pronto\n[8] Cancelar pedido\n=========================\n");
 
                 while (true) {
                     try {
@@ -1854,7 +1862,7 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc1 == 8){
+                if (opc1 == 8) {
                     return 1;
                 }
                 if (opc1 == 7) {
@@ -1869,7 +1877,7 @@ public class Main {
         return 0;
     }
 
-    static int montaAmerSimp(ArrayList<Produtos> produtos){
+    static int montaAmerSimp(ArrayList<Produtos> produtos) {
         int opc, opc1;
         Scanner sc = new Scanner(System.in);
 
@@ -1891,7 +1899,7 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 3){
+        if (opc == 3) {
             return 1;
         }
         if (opc == 1) {
@@ -1912,7 +1920,7 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc1 == 8){
+                if (opc1 == 8) {
                     return 1;
                 }
                 if (opc1 == 7) {
@@ -1927,7 +1935,7 @@ public class Main {
         System.out.print("\n=========================\nBurguer Americano Simples adicionado ao carrinho!\n=========================\n");
         return 0;
     }
-    static int montaAmerDupl(ArrayList<Produtos> produtos){
+    static int montaAmerDupl(ArrayList<Produtos> produtos) {
         int opc, opc1;
         Scanner sc = new Scanner(System.in);
 
@@ -1949,14 +1957,14 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 3){
+        if (opc == 3) {
             return 1;
         }
         if (opc == 1) {
             while (true) {
 
                 System.out.print("\n=========================\nQual ingrediente deseja remover?\n[1] Pão\n[2] Hamburguer\n" +
-                        "[3] Salada Americana\n[4] Cebola Picada\n[5] Molho Defumado\n[6] Maionese\n[7] Hamburguer 2\n[8] Pronto\n[9] Cancelar pedido\n=========================\n");
+                    "[3] Salada Americana\n[4] Cebola Picada\n[5] Molho Defumado\n[6] Maionese\n[7] Hamburguer 2\n[8] Pronto\n[9] Cancelar pedido\n=========================\n");
 
                 while (true) {
                     try {
@@ -1972,7 +1980,7 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc1 == 9){
+                if (opc1 == 9) {
                     return 1;
                 }
                 if (opc1 == 8) {
@@ -1988,7 +1996,7 @@ public class Main {
         System.out.print("\n=========================\nBurguer Americano Duplo adicionado ao carrinho!\n=========================\n");
         return 0;
     }
-    static int montaAmerTrip(ArrayList<Produtos> produtos){
+    static int montaAmerTrip(ArrayList<Produtos> produtos) {
         int opc, opc1;
         Scanner sc = new Scanner(System.in);
 
@@ -2010,15 +2018,15 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 3){
+        if (opc == 3) {
             return 1;
         }
         if (opc == 1) {
             while (true) {
 
                 System.out.print("\n=========================\nQual ingrediente deseja remover?\n[1] Pão\n[2] Hamburguer\n" +
-                        "[3] Salada Americana\n[4] Cebola Picada\n[5] Molho Defumado\n[6] Maionese\n" +
-                        "[7] Hamburguer 2\n[8] Hamburguer 3\n[9] Pronto\n[10] Cancelar pedido\n=========================\n");
+                    "[3] Salada Americana\n[4] Cebola Picada\n[5] Molho Defumado\n[6] Maionese\n" +
+                    "[7] Hamburguer 2\n[8] Hamburguer 3\n[9] Pronto\n[10] Cancelar pedido\n=========================\n");
 
                 while (true) {
                     try {
@@ -2034,7 +2042,7 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc1 == 10){
+                if (opc1 == 10) {
                     return 1;
                 }
                 if (opc1 == 9) {
@@ -2050,7 +2058,7 @@ public class Main {
         return 0;
     }
 
-    static int montaSorvete(ArrayList<Produtos> produtos){
+    static int montaSorvete(ArrayList<Produtos> produtos) {
         int opc;
         Scanner sc = new Scanner(System.in);
 
@@ -2072,7 +2080,7 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 4){
+        if (opc == 4) {
             return 1;
         }
         Sorvete sorvete = new Sorvete(opc);
@@ -2081,41 +2089,41 @@ public class Main {
         return 0;
     }
 
-    static void montaBatata(ArrayList<Produtos> produtos){
+    static void montaBatata(ArrayList<Produtos> produtos) {
         BatataFrita batata = new BatataFrita();
         produtos.add(batata);
         System.out.print("\n=========================\nBatata Frita adicionada ao carrinho!\n=========================\n");
     }
-    static void montaFile(ArrayList<Produtos> produtos){
+    static void montaFile(ArrayList<Produtos> produtos) {
         FileFrangoEmpanado file = new FileFrangoEmpanado();
         produtos.add(file);
         System.out.print("\n=========================\nFilé de Frango Empanado adicionado ao carrinho!\n=========================\n");
     }
 
-    static int montaRefri(ArrayList<Produtos> produtos, int i){
+    static int montaRefri(ArrayList<Produtos> produtos, int i) {
         Scanner sc = new Scanner(System.in);
         int opc;
 
         switch (i) {
-            case 1://refil
+            case 1: //refil
                 System.out.print("\n=========================\n[1] Fanta uva\n[2] Fanta Laranja\n[3] Guaraná\n[4] Coca-cola\n[5] Pepsi\n[6] Cancelar pedido\n=========================\n");
 
-                while (true){
+                while (true) {
                     try {
                         System.out.print("Opção: ");
                         opc = sc.nextInt();
 
-                        if (opc < 1 || opc > 6){
+                        if (opc < 1 || opc > 6) {
                             System.out.print("Opção inválida\n");
                             continue;
                         }
                         break;
-                    } catch (InputMismatchException e){
+                    } catch (InputMismatchException e) {
                         System.out.print("Inserção inválida\n");
                         sc.nextLine();
                     }
                 }
-                if(opc == 6){
+                if (opc == 6) {
                     return 1;
                 }
                 BebidaRefrigeranteRefil refil = new BebidaRefrigeranteRefil(opc);
@@ -2127,22 +2135,22 @@ public class Main {
             case 2: //refri lata
                 System.out.print("\n=========================\n[1] Fanta uva\n[2] Fanta Laranja\n[3] Guaraná\n[4] Coca-cola\n[5] Pepsi\n[6] Cancelar pedido\n=========================\n");
 
-                while (true){
+                while (true) {
                     try {
                         System.out.print("Opção: ");
                         opc = sc.nextInt();
 
-                        if (opc < 1 || opc > 6){
+                        if (opc < 1 || opc > 6) {
                             System.out.print("Opção inválida\n");
                             continue;
                         }
                         break;
-                    } catch (InputMismatchException e){
+                    } catch (InputMismatchException e) {
                         System.out.print("Inserção inválida\n");
                         sc.nextLine();
                     }
                 }
-                if(opc == 6){
+                if (opc == 6) {
                     return 1;
                 }
                 BebidaRefrigeranteLata lata = new BebidaRefrigeranteLata(opc);
@@ -2155,7 +2163,7 @@ public class Main {
         return 1;
     }
 
-    static int montaSuco(ArrayList<Produtos> produtos){
+    static int montaSuco(ArrayList<Produtos> produtos) {
         Scanner sc = new Scanner(System.in);
         int opc;
 
@@ -2176,7 +2184,7 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 4){
+        if (opc == 4) {
             return 1;
         }
 
@@ -2186,7 +2194,7 @@ public class Main {
         return 0;
     }
 
-    static int montaChaGel(ArrayList<Produtos> produtos){
+    static int montaChaGel(ArrayList<Produtos> produtos) {
         Scanner sc = new Scanner(System.in);
         int opc;
 
@@ -2214,7 +2222,7 @@ public class Main {
         return 0;
     }
 
-    static int montaAgua(ArrayList<Produtos> produtos){
+    static int montaAgua(ArrayList<Produtos> produtos) {
         Scanner sc = new Scanner(System.in);
         int opc;
 
@@ -2235,7 +2243,7 @@ public class Main {
                 sc.nextLine();
             }
         }
-        if(opc == 4){
+        if (opc == 4) {
             return 1;
         }
         Agua agua = new Agua(opc);
@@ -2244,12 +2252,12 @@ public class Main {
         return 0;
     }
 
-    static int simpDuplTrip(ArrayList<Produtos> produtos, int i){
+    static int simpDuplTrip(ArrayList<Produtos> produtos, int i) {
         int opc;
         Scanner sc = new Scanner(System.in);
 
         switch (i) {
-            case 1://hamburguer simples
+            case 1: //hamburguer simples
                 System.out.print("\n=========================\n[1] Frango\n[2] Carne\n[3] Cancelar pedido\n=========================\n");
 
                 while (true) {
@@ -2267,15 +2275,15 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc == 3){
+                if (opc == 3) {
                     return 1;
                 }
-                if (montaHambSimp(produtos, opc) == 1){
+                if (montaHambSimp(produtos, opc) == 1) {
                     return 1;
                 } else {
                     return 0;
                 }
-            case 2://hamburguer duplo
+            case 2: //hamburguer duplo
                 System.out.print("\n=========================\n[1] Frango\n[2] Carne\n[3] Cancelar pedido\n=========================\n");
 
                 while (true) {
@@ -2293,16 +2301,16 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc == 3){
+                if (opc == 3) {
                     return 1;
                 }
-                if(montaHambDupl(produtos, opc) == 1){
+                if (montaHambDupl(produtos, opc) == 1) {
                     return 1;
                 } else {
                     return 0;
                 }
             case 3: //hamburguer Triplo
-                if(montaHambTrip(produtos) == 1){
+                if (montaHambTrip(produtos) == 1) {
                     return 1;
                 } else {
                     return 0;
@@ -2311,24 +2319,24 @@ public class Main {
         return 1;
     }
 
-    static int simpParmAmer(ArrayList<Produtos> produtos, int i){
+    static int simpParmAmer(ArrayList<Produtos> produtos, int i) {
         switch (i) {
             case 1: //Croc simples
-                if(montaCrocSimp(produtos) == 1){
+                if (montaCrocSimp(produtos) == 1) {
                     return 1;
                 } else {
                     System.out.print("\n=========================\nCroc Simples adicionado ao carrinho!\n=========================\n");
                     return 0;
                 }
-            case 2://Croc parmegiana
-                if(montaCrocParm(produtos) == 1){
+            case 2: //Croc parmegiana
+                if (montaCrocParm(produtos) == 1) {
                     return 1;
                 } else {
                     System.out.print("\n=========================\nCroc parmegiana adicionado ao carrinho!\n=========================\n");
                     return 0;
                 }
             case 3: //Croc americano
-                if(montaCrocAmer(produtos) == 1){
+                if (montaCrocAmer(produtos) == 1) {
                     return 1;
                 } else {
                     System.out.print("\n=========================\nCroc Americano adicionado ao carrinho!\n=========================\n");
@@ -2338,22 +2346,22 @@ public class Main {
         return 1;
     }
 
-    static int burSimpDuplTrip(ArrayList<Produtos> produtos, int i){
+    static int burSimpDuplTrip(ArrayList<Produtos> produtos, int i) {
         switch (i) {
             case 1: //burguer americano simples
-                if(montaAmerSimp(produtos) == 1){
+                if (montaAmerSimp(produtos) == 1) {
                     return 1;
                 } else {
                     return 0;
                 }
             case 2: //burguer americano duplo
-                if(montaAmerDupl(produtos) == 1){
+                if (montaAmerDupl(produtos) == 1) {
                     return 1;
-                } else{
+                } else {
                     return 0;
                 }
             case 3: //burguer americano triplo
-                if(montaAmerTrip(produtos) == 1){
+                if (montaAmerTrip(produtos) == 1) {
                     return 1;
                 } else {
                     return 0;
@@ -2362,12 +2370,12 @@ public class Main {
         return 1;
     }
 
-    static void batataFile(ArrayList<Produtos> produtos, int i){
+    static void batataFile(ArrayList<Produtos> produtos, int i) {
         switch (i) {
-            case 1://batata
+            case 1: //batata
                 montaBatata(produtos);
                 break;
-            case 2://filé
+            case 2: //filé
                 montaFile(produtos);
                 break;
         }
@@ -2396,28 +2404,28 @@ public class Main {
                         sc.nextLine();
                     }
                 }
-                if(opc == 3){
+                if (opc == 3) {
                     return 1;
                 }
-                if(montaRefri(produtos, opc) == 1){
+                if (montaRefri(produtos, opc) == 1) {
                     return 1;
                 } else {
                     return 0;
                 }
             case 2: //sucos
-                if(montaSuco(produtos) == 1){
+                if (montaSuco(produtos) == 1) {
                     return 1;
                 } else {
                     return 0;
                 }
-            case 3://chá gelado
-                if(montaChaGel(produtos) == 1){
+            case 3: //chá gelado
+                if (montaChaGel(produtos) == 1) {
                     return 1;
                 } else {
                     return 0;
                 }
             case 4:
-                if(montaAgua(produtos) == 1){
+                if (montaAgua(produtos) == 1) {
                     return 1;
                 } else {
                     return 0;
