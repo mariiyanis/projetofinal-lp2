@@ -1,5 +1,5 @@
 public class Sorvete implements Produtos, Promocional {
-    private static double precoBase = 3.50; // Preço editável
+    private static double precoBase = 3.50;
     private double preco;
     private SorveteSabor sabor;
     private String nome;
@@ -11,7 +11,6 @@ public class Sorvete implements Produtos, Promocional {
         nome = "Sorvete";
     }
 
-    // método novo (crud update)
     public static void setPrecoBase(double novo) { precoBase = novo; }
 
     // métodos da interface promocional
