@@ -1,8 +1,8 @@
 public class Agua implements Produtos {
-    // variáveis p/ crud (update)
-    private static double precoBase1 = 2.00; // Sem gás 500ml
-    private static double precoBase2 = 3.00; // Com gás 500ml
-    private static double precoBase3 = 5.00; // Sem gás 1L
+    // variáveis p/ crud update
+    private static double precoBase1 = 2.00; // sem gás 500ml
+    private static double precoBase2 = 3.00; // com gás 500ml
+    private static double precoBase3 = 5.00; // sem gás 1L
 
     private double preco;
     private Aguas agua;
@@ -10,7 +10,7 @@ public class Agua implements Produtos {
 
     Agua(int i) {
         setAgua(i);
-        // Usa as variáveis estáticas (alteráveis pelo Admin)
+        // variáveis estáticas alteráveis pelo admin
         if(i == 1) setPreco(precoBase1);
         else if(i == 2) setPreco(precoBase2);
         else if(i == 3) setPreco(precoBase3);
@@ -18,7 +18,6 @@ public class Agua implements Produtos {
         setNome();
     }
 
-    // método novo (crud update)
     public static void atualizarPrecoBase(int tipo, double novoValor) {
         if(tipo == 1) precoBase1 = novoValor;
         else if(tipo == 2) precoBase2 = novoValor;
