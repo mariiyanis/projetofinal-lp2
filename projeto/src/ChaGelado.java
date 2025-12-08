@@ -1,47 +1,31 @@
 public class ChaGelado implements Produtos {
-    private static double preco;
+    private static double precoBase = 5.00; 
+    
+    private double preco;
     private ChaSabor sabor;
     private String nome;
+
     ChaGelado(int i) {
         setSabor(i);
-        setPreco(7.00);
+        setPreco(precoBase);
         setNome();
     }
 
+    public static void setPrecoBase(double novo) {
+        precoBase = novo;
+    }
+
     public void setSabor(int i) {
-        this.sabor = ChaSabor.values()[i-1];
+        if(i == 1) this.sabor = ChaSabor.PESSEGO;
+        else if(i == 2) this.sabor = ChaSabor.LIMAO_ABACAXI_HORTELA; 
+        else this.sabor = ChaSabor.MACA; 
     }
 
-    public static void setPreco(double preco) {
-        ChaGelado.preco = preco;
-    }
+    public void setNome() { this.nome = "Cha Gelado"; }
+    public void setPreco(double preco) { this.preco = preco; }
 
-    public void setNome() {
-        this.nome = "Chá gelado " +sabor+"\n";
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public ChaSabor getSabor() {
-        return sabor;
-    }
-
-    @Override
-    public double getPreco() {
-        return preco;
-    }
-
-    @Override
-    public void imprime() {
-        exibirNome();
-        System.out.print("Preço: " + getPreco() + "\n");
-    }
-
-    @Override
-    public void exibirNome() {
-        System.out.print(getNome());
-    }
-
+    @Override public String getNome() { return this.nome; }
+    @Override public double getPreco() { return this.preco; }
+    @Override public void imprime() { System.out.print(this.sabor); }
+    @Override public void exibirNome() { System.out.print("Cha " + this.sabor + " - R$ " + String.format("%.2f", this.preco)); }
 }
