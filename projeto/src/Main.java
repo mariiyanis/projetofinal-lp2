@@ -86,11 +86,10 @@ public class Main {
 
                                     boolean irParaSistema = true;
 
-                                    // === MENU ADMIN (ATUALIZADO COM BATATA) ===
                                     if (usuarioPermissoes.contains("1")) {
                                         System.out.println("\n=== PAINEL ADMINISTRATIVO ===");
                                         System.out.println("[1] Iniciar Vendas");
-                                        System.out.println("[2] Atualizar Preços");
+                                        System.out.println("[2] Atualizar Preços (CRUD Update)");
                                         System.out.print("Opção: ");
 
                                         int opcAdmin = 0;
@@ -101,34 +100,48 @@ public class Main {
                                         }
 
                                         if (opcAdmin == 2) {
-                                            System.out.println("\n--- Tabela de Preços ---");
+                                            System.out.println("\n--- Tabela de Preços (Selecione para editar) ---");
                                             System.out.println("1. Agua");
                                             System.out.println("2. Sorvete");
-                                            System.out.println("3. Batata Frita"); // NOVA OPÇÃO
+                                            System.out.println("3. Batata Frita");
+                                            System.out.println("4. Suco");
+                                            System.out.println("5. Cha Gelado");
+                                            System.out.println("6. File de Frango");
+                                            
                                             System.out.print("Produto ID: ");
                                             int pId = sc.nextInt();
 
-                                            System.out.print("Novo Valor: R$ ");
+                                            System.out.print("Novo Valor Base: R$ ");
                                             double nVal = sc.nextDouble();
 
                                             if (pId == 1) {
                                                 Agua.atualizarPrecoBase(1, nVal);
-                                                Agua.atualizarPrecoBase(2, nVal + 1.0);
-                                                Agua.atualizarPrecoBase(3, nVal + 2.0);
+                                                Agua.atualizarPrecoBase(2, nVal + 1.0); // com gás
+                                                Agua.atualizarPrecoBase(3, nVal + 2.0); // saborizada
                                                 System.out.println(">> Preço da Água atualizado!");
                                             } else if (pId == 2) {
                                                 Sorvete.setPrecoBase(nVal);
                                                 System.out.println(">> Preço do Sorvete atualizado!");
                                             } else if (pId == 3) {
-                                                BatataFrita.setPrecoBase(nVal); // CHAMA O MÉTODO NOVO
+                                                BatataFrita.setPrecoBase(nVal);
                                                 System.out.println(">> Preço da Batata atualizado!");
+                                            } else if (pId == 4) {
+                                                Suco.setPrecoBase(nVal);
+                                                System.out.println(">> Preço do Suco atualizado!");
+                                            } else if (pId == 5) {
+                                                ChaGelado.setPrecoBase(nVal);
+                                                System.out.println(">> Preço do Chá atualizado!");
+                                            } else if (pId == 6) {
+                                                FileFrangoEmpanado.setPrecoBase(nVal);
+                                                System.out.println(">> Preço do Filé atualizado!");
+                                            } else {
+                                                System.out.println("Produto não encontrado.");
                                             }
 
-                                            System.out.println("Reiniciando para aplicar...");
+                                            System.out.println("Reiniciando para aplicar alterações...");
                                             irParaSistema = false;
                                         }
                                     }
-                                    // ==========================================
 
                                     if (irParaSistema) {
                                         System.out.print("Entrando no sistema...\n");
