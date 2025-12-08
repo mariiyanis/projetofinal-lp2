@@ -1,38 +1,30 @@
 public class BatataFrita implements Produtos {
-
-    private static double preco;
+    // variável estática p/ manter o preço atualizado globalmente
+    private static double precoBase = 9.00; 
+    
+    private double preco;
     private String nome;
 
     BatataFrita() {
-        setNome("Batata Frita\n");
-        setPreco(9.00);
+        setNome("Batata Frita");
+        setPreco(precoBase); // usa o preço base configurado pelo admin
     }
 
-    public static void setPreco(double preco) {
-        BatataFrita.preco = preco;
+    public static void setPrecoBase(double novo) {
+        precoBase = novo;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getNome() {
-        return nome;
-    }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getNome() { return nome; }
 
     @Override
-    public void imprime() {
-        exibirNome();
-        System.out.print("Preço: " + getPreco() + "\n");
-    }
+    public void imprime() { System.out.print("Batata Frita"); }
 
     @Override
     public void exibirNome() {
-        System.out.print(getNome());
+        System.out.print("Batata Frita - R$ " + String.format("%.2f", this.preco));
     }
 
-    @Override
-    public double getPreco() {
-        return preco;
-    }
+    public void setPreco(double preco) { this.preco = preco; }
+    public double getPreco() { return preco; }
 }
