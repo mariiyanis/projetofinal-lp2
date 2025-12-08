@@ -1,60 +1,33 @@
 public class Suco implements Produtos {
-    private  double preco;
-    private Sucos sabor;
+    // variável estática p/ admin alterar 
+    private static double precoBase = 6.00;
+    
+    private double preco;
+    private Sucos suco;
     private String nome;
 
     Suco(int i) {
-        setSabor(i);
-        setPreco(i);
+        setSuco(i);
+        setPreco(precoBase); // usa o preço dinâmico
         setNome();
     }
-    public void setSabor(int i){
-        if(i == 1){
-            sabor = Sucos.LARANJA_NATURAL;
-        } else if(i == 2){
-            sabor = Sucos.DELL_UVA;
-        } else if(i == 3){
-            sabor = Sucos.DELL_LARANJA;
-        } else {
-            System.out.print("erro em setSabor do suco, nao foi possivel identificar o sabor do suco");
-        }
+
+    // método para o Admin
+    public static void setPrecoBase(double novo) {
+        precoBase = novo;
     }
 
-    public void setNome() {
-        this.nome = "Suco "+getSabor()+"\n";
+    public void setSuco(int i) {
+        if(i == 1) this.suco = Sucos.LARANJA_NATURAL;
+        else if(i == 2) this.suco = Sucos.DELL_UVA;      
+        else if(i == 3) this.suco = Sucos.DELL_LARANJA;  
     }
 
-    public void setPreco(int i) {
-        if(i == 1){
-            this.preco = 5.00;
-        } else if(i == 2||i == 3){
-            this.preco = 4.50;
-        } else {
-            System.out.print("erro em setPreco, nao foi possivel identificar que suco era");
-        }
-    }
+    public void setNome() { this.nome = "Suco"; }
+    public void setPreco(double preco) { this.preco = preco; }
 
-    public Sucos getSabor(){
-        return sabor;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    @Override
-    public void imprime() {
-        exibirNome();
-        System.out.print("Preço: " + getPreco() + "\n");
-    }
-
-    @Override
-    public void exibirNome() {
-        System.out.print(getNome());
-    }
-
-    @Override
-    public double getPreco() {
-        return preco;
-    }
+    @Override public String getNome() { return this.nome; }
+    @Override public double getPreco() { return this.preco; }
+    @Override public void imprime() { System.out.print(this.suco); }
+    @Override public void exibirNome() { System.out.print("Suco " + this.suco + " - R$ " + String.format("%.2f", this.preco)); }
 }
