@@ -89,7 +89,7 @@ public class Main {
                                     if (usuarioPermissoes.contains("1")) {
                                         System.out.println("\n=== PAINEL ADMINISTRATIVO ===");
                                         System.out.println("[1] Iniciar Vendas");
-                                        System.out.println("[2] Atualizar Preços (CRUD Update)");
+                                        System.out.println("[2] Atualizar Preços");
                                         System.out.print("Opção: ");
 
                                         int opcAdmin = 0;
@@ -326,7 +326,6 @@ public class Main {
                             }
                         }
 
-                        // Requisito CRUD: delete
                         if (opc2 == 12) {
                             if (produtosPedidoAtual.isEmpty()) {
                                 System.out.println(">> Carrinho vazio! Nada para remover.");
