@@ -82,6 +82,7 @@ public class Main {
 
                             if (Objects.equals(login, usuarioNome)) {
                                 if (Objects.equals(senha, usuarioSenha)) {
+                                    usuarioEncontrado = true;
                                     System.out.print("|Nome:  " + usuarioNome + "  " + "|Tema:  " + usuarioTema + "\n");
 
                                     boolean irParaSistema = true;
