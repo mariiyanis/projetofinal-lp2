@@ -21,8 +21,8 @@ public class Main {
 
         // se arquivo nao existir, cria com usuario "admin"
         if (!Files.exists(caminho)) {
-            System.out.println("  sem arquivo usuários  \n");
-            System.out.println("     criando arquivo     \n");
+            System.out.println("  sem arquivo usuários  ");
+            System.out.println("     criando arquivo     ");
 
             try (BufferedWriter bw = new BufferedWriter(new FileWriter("usuarios.csv"))) {
                 bw.write("nome, tema, permissoes, senha");
@@ -89,9 +89,10 @@ public class Main {
 
                                     if (usuarioPermissoes.contains("1")) {
                                         System.out.println("\n=== PAINEL ADMINISTRATIVO ===");
+                                        System.out.println("\n------- em construção -------");
                                         System.out.println("[1] Iniciar Vendas");
                                         System.out.println("[2] Atualizar Preços");
-                                        System.out.print("Opção: ");
+                                        System.out.print("Digite qualquer coisa para pular: ");
 
                                         int opcAdmin = 0;
                                         try {
@@ -100,7 +101,7 @@ public class Main {
                                             sc.nextLine();
                                         }
 
-                                        if (opcAdmin == 2) {
+                                        /*if (opcAdmin == 2) {
                                             System.out.println("\n--- Tabela de Preços (Selecione para editar) ---");
                                             System.out.println("1. Agua");
                                             System.out.println("2. Sorvete");
@@ -141,7 +142,7 @@ public class Main {
 
                                             System.out.println("Reiniciando para aplicar alterações...");
                                             irParaSistema = false;
-                                        }
+                                        }*/
                                     }
 
                                     if (irParaSistema) {
