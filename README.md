@@ -2,9 +2,9 @@
 ## Sobre o programa 
 Simulação de atendimento e caixa para uma lanchonete fast-food. Pelo menu principal é possível simular a criação de um pedido, selecionando opções de comidas e seus ingredientes, visualizar os pedidos pendentes, entregar um pedido e acompanhar o saldo do caixa. Cada opção selecionada leva para seu próprio menu, onde o usuário insere um nome ou um número para fazer as ações desejadas. As informações sobre a execução do programa são impressas por via terminal.
 ## Diagrama UML
-![diagrama UML](img/UML.png)
+![diagrama UML](img/diagram.png)
 O diagrama em boa qualidade pode ser visualizado em /img/UML.png
-Ele tem 23 classes, com 06 heranças distintas no total (06 classes pai diferentes).
+
 ## Compilação e execução do código
 
 Passo-a-passo:
@@ -14,7 +14,11 @@ Passo-a-passo:
     2. você pode compilar o código utilizando o comando "make" do Makefile
     
     3. execute o código digitando "make test"
-    
+## Login
+    - Se não houver arquivo com usuários é criado um arquivo "usuários.csv" com 01 usuário ADMIN
+    - Cada usuário tem nome, preferência de tema, permissões e senha.
+    - De ínicio é dada três opções: [1] entrar com usuário já existente (login + senha), [2] adicionar novo usuário, [3] encerrar o programa.
+
 ## Uso
 0. Menu principal
     - ao iniciar o programa exibe um menu com 05 opções principais

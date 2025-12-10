@@ -1,0 +1,4 @@
+nome, tema, permissoes, senha
+ADMIN, ESCURO, 1, admin
+
+ian, CLARO, 0, senha
