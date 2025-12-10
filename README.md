@@ -15,9 +15,12 @@ Passo-a-passo:
     
     3. execute o código digitando "make test"
 ## Login
-    - Se não houver arquivo com usuários é criado um arquivo "usuários.csv" com 01 usuário ADMIN
+    - Se não houver arquivo com usuários é criado um arquivo "usuários.csv" na pasta (out/production/projeto) com 01 usuário ADMIN
     - Cada usuário tem nome, preferência de tema, permissões e senha.
-    - De ínicio é dada três opções: [1] entrar com usuário já existente (login + senha), [2] adicionar novo usuário, [3] encerrar o programa.
+    - De ínicio é dada três opções: 
+    [1] entrar com usuário já existente (login + senha) 
+    [2] adicionar novo usuário 
+    [3] encerrar o programa.
 
 ## Uso
 0. Menu principal
@@ -40,9 +43,12 @@ Passo-a-passo:
           [7] Sorvete (chocolate/ misto/ creme)
           [8] Porções (Batata/ Filé de frango empanado)
           [9] Bebida
-          [10] Sair
+          [10] Concluir
+          [11] Cancelar pedido
+          [12] Remover item do carrinho
     - você pode selecionar uma opção de 1 à 9 para ser redirecionado a um menu de seleção de ingredientes / sabor (caso essas opções estejam disponíveis para esse produto)
-    - para voltar a tela principal digite 10. Seu produto será finalizado e enviado para ser feito.
+    - para voltar a tela principal digite 10. Seu produto será finalizado e enviado para ser feito. Se desejar voltar a tela principal sem fazer o pedido, digite 11 para cancelar pedido.
+    - digite 12 para remover um pedido do carrinho.
 2. Entregar pedido
     - um menu com a mensagem "ID do pedido pronto:" você deve digitar o número desse ID e o pedido correspondente será entregue, sendo removido da lista de "Pedidos pendentes" e inserindo seu valor no caixa.
     - os IDs dos produtos pode ser visualizadoem "[3] Pedidos pendentes".
@@ -59,4 +65,4 @@ Passo-a-passo:
    - se não houver nenhum pedido pendente o saldo total do caixa é exibido e o programa fecha automaticamente.
    - o caixa não fecha se houver algum pedido pendente.
 ## Auto-teste
-O programa tem 02 funções, que podem ser encontradas na Main, que testam o comportamento das classes para propósitos de manutenção e correção de erros. Por padrão ficam desativadas, as instruções para uso estão no código nas linhas 11-23 da Main.
+O programa tem 02 funções, que podem ser encontradas na Main, que testam o comportamento das classes para propósitos de manutenção e correção de erros. Por padrão ficam desativadas.
